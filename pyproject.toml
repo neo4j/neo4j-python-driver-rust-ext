@@ -29,9 +29,13 @@ dependencies = [
 requires-python = ">=3.7"
 keywords = ["neo4j", "graph", "database"]
 classifiers = [
+    "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
     "License :: OSI Approved :: Apache Software License",
-    "Operating System :: OS Independent",
+    "Operating System :: POSIX",
+    "Operating System :: Unix",
+    "Operating System :: MacOS",
+    "Operating System :: Microsoft :: Windows",
     "Topic :: Database",
     "Topic :: Software Development",
     "Programming Language :: Python :: 3.7",
@@ -56,5 +60,5 @@ requires = ["maturin>=1.2,<2.0"]
 build-backend = "maturin"
 
 [tool.maturin]
-features = ["pyo3/extension-module"]
+features = ["pyo3/extension-module", "pyo3/generate-import-lib"]
 module-name = "neo4j._codec.packstream._rust"

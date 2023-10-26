@@ -69,6 +69,6 @@ RUN apt update && \
     apt update && \
     apt install -y -V libarrow-dev # For C++
 
-# Get Rust
+# Install Rust toolchain
 RUN curl https://sh.rustup.rs -sSf | bash -s -- -y
 ENV PATH="/root/.cargo/bin:${PATH}"
