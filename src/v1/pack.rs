@@ -15,6 +15,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+use std::borrow::Cow;
 use std::sync::OnceLock;
 
 use pyo3::exceptions::{PyOverflowError, PyTypeError, PyValueError};
@@ -170,7 +171,7 @@ impl<'a> PackStreamEncoder<'a> {
         }
 
         if value.is_instance(self.type_mappings.bytes_types.as_ref(self.py))? {
-            return self.write_bytes(value.extract::<&[u8]>()?);
+            return self.write_bytes(value.extract::<Cow<[u8]>>()?);
         }
 
         if value.is_instance(self.type_mappings.sequence_types.as_ref(self.py))? {
@@ -204,7 +205,7 @@ impl<'a> PackStreamEncoder<'a> {
             let size = value_ref.fields.len().try_into().map_err(|_| {
                 PyErr::new::<PyOverflowError, _>("Structure header size out of range")
             })?;
-            self.write_struct_header(value_ref.tag, size);
+            self.write_struct_header(value_ref.tag, size)?;
             return value_ref
                 .fields
                 .iter()
@@ -267,7 +268,7 @@ impl<'a> PackStreamEncoder<'a> {
         Ok(())
     }
 
-    fn write_bytes(&mut self, b: &[u8]) -> PyResult<()> {
+    fn write_bytes(&mut self, b: Cow<[u8]>) -> PyResult<()> {
         let size = Self::usize_to_u64(b.len())?;
         if size <= 255 {
             self.buffer.extend(&[BYTES_8]);
@@ -283,7 +284,7 @@ impl<'a> PackStreamEncoder<'a> {
                 "Bytes header size out of range",
             ));
         }
-        self.buffer.extend(b);
+        self.buffer.extend(b.iter());
         Ok(())
     }
 
@@ -354,7 +355,13 @@ impl<'a> PackStreamEncoder<'a> {
         Ok(())
     }
 
-    fn write_struct_header(&mut self, tag: u8, size: u8) {
+    fn write_struct_header(&mut self, tag: u8, size: u8) -> PyResult<()> {
+        if size > 15 {
+            return Err(PyErr::new::<PyOverflowError, _>(
+                "Structure size out of range",
+            ));
+        }
         self.buffer.extend(&[TINY_STRUCT + size, tag]);
+        Ok(())
     }
 }
