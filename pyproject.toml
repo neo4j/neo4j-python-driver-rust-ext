@@ -19,8 +19,9 @@ description = "Rust Extensions for a Faster Neo4j Bolt Driver for Python"
 license = {text = "Apache License, Version 2.0"}
 readme = "README.md"
 authors = [
-    # Can be changed back when https://github.com/PyO3/maturin/pull/1832 is merged and released
-    # {name = "Neo4j, Inc.", email = "drivers@neo4j.com"},
+    # https://github.com/PyO3/maturin/pull/1832
+    # Can be changed back when we bump maturin to >= 1.3.2
+    # However, 1.3.1 removed Python 3.7 from the CI, only supporting it on a "maybe works"-basis...
     {email = "\"Neo4j, Inc.\" <drivers@neo4j.com>"}
 ]
 dependencies = [
@@ -47,8 +48,8 @@ version = "5.22.0.0"
 
 [project.urls]
 Homepage = "https://neo4j.com/"
-Repository = "https://github.com/neo4j-drivers/neo4j-python-driver-rust-ext"
-"Issue Tracker" = "https://github.com/neo4j-drivers/neo4j-python-driver-rust-ext/issues"
+Repository = "https://github.com/neo4j/neo4j-python-driver-rust-ext"
+"Issue Tracker" = "https://github.com/neo4j/neo4j-python-driver-rust-ext/issues"
 Forum = "https://community.neo4j.com/c/drivers-stacks/python/"
 Discord = "https://discord.com/invite/neo4j"
 
