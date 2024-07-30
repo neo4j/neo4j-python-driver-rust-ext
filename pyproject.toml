@@ -19,7 +19,7 @@ description = "Rust Extensions for a Faster Neo4j Bolt Driver for Python"
 license = {text = "Apache License, Version 2.0"}
 readme = "README.md"
 authors = [
-     {name = "Neo4j, Inc.", email = "drivers@neo4j.com"},
+    {name = "Neo4j, Inc.", email = "drivers@neo4j.com"},
 ]
 dependencies = [
     "neo4j == 5.23.0"
