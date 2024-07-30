@@ -19,9 +19,7 @@ description = "Rust Extensions for a Faster Neo4j Bolt Driver for Python"
 license = {text = "Apache License, Version 2.0"}
 readme = "README.md"
 authors = [
-    # Can be changed back when https://github.com/PyO3/maturin/pull/1832 is merged and released
-    # {name = "Neo4j, Inc.", email = "drivers@neo4j.com"},
-    {email = "\"Neo4j, Inc.\" <drivers@neo4j.com>"}
+    {name = "Neo4j, Inc.", email = "drivers@neo4j.com"},
 ]
 dependencies = [
     "neo4j == 5.23.0"
@@ -29,7 +27,7 @@ dependencies = [
 requires-python = ">=3.7"
 keywords = ["neo4j", "graph", "database"]
 classifiers = [
-    "Development Status :: 4 - Beta",
+    "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Developers",
     "License :: OSI Approved :: Apache Software License",
     "Operating System :: OS Independent",
@@ -47,8 +45,9 @@ version = "5.23.0.0"
 
 [project.urls]
 Homepage = "https://neo4j.com/"
-Repository = "https://github.com/neo4j-drivers/neo4j-python-driver-rust-ext"
-"Issue Tracker" = "https://github.com/neo4j-drivers/neo4j-python-driver-rust-ext/issues"
+Repository = "https://github.com/neo4j/neo4j-python-driver-rust-ext"
+"Issue Tracker" = "https://github.com/neo4j/neo4j-python-driver-rust-ext/issues"
+Changelog = "https://github.com/neo4j/neo4j-python-driver-rust-ext/blob/HEAD/CHANGELOG.md"
 Forum = "https://community.neo4j.com/c/drivers-stacks/python/"
 Discord = "https://discord.com/invite/neo4j"
 
@@ -58,7 +57,7 @@ pandas = ["neo4j[pandas]"]
 pyarrow = ["neo4j[pyarrow]"]
 
 [build-system]
-requires = ["maturin>=1.2,<2.0"]
+requires = ["maturin ~= 1.6.0"]
 build-backend = "maturin"
 
 [tool.maturin]
