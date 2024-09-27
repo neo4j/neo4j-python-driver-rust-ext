@@ -44,11 +44,11 @@ def test_pack_injection_works(packer_with_buffer):
     class TestClass:
         pass
 
-    class TestException(Exception):
+    class TestError(Exception):
         pass
 
     def raise_test_exception(*args, **kwargs):
-        raise TestException()
+        raise TestError
 
     dehydration_hooks = DehydrationHooks(
         exact_types={TestClass: raise_test_exception},
@@ -57,48 +57,52 @@ def test_pack_injection_works(packer_with_buffer):
     test_object = TestClass()
     packer, _ = packer_with_buffer
 
-    with pytest.raises(TestException) as exc:
+    with pytest.raises(TestError) as exc:
         packer.pack(test_object, dehydration_hooks=dehydration_hooks)
 
     # printing the traceback to stdout to make it easier to debug
     traceback.print_exception(exc.type, exc.value, exc.tb, file=sys.stdout)
 
     assert any("_rust_pack" in str(entry.statement) for entry in exc.traceback)
-    assert not any("_py_pack" in str(entry.statement)
-                   for entry in exc.traceback)
+    assert not any(
+        "_py_pack" in str(entry.statement) for entry in exc.traceback
+    )
 
 
 def test_unpack_injection_works(unpacker_with_buffer):
-    class TestException(Exception):
+    class TestError(Exception):
         pass
 
     def raise_test_exception(*args, **kwargs):
-        raise TestException()
+        raise TestError
 
     hydration_hooks = {Structure: raise_test_exception}
     unpacker, buffer = unpacker_with_buffer
 
     buffer.reset()
-    buffer.data = bytearray(b"\xB0\xFF")
+    buffer.data = bytearray(b"\xb0\xff")
 
-    with pytest.raises(TestException) as exc:
+    with pytest.raises(TestError) as exc:
         unpacker.unpack(hydration_hooks)
 
     # printing the traceback to stdout to make it easier to debug
     traceback.print_exception(exc.type, exc.value, exc.tb, file=sys.stdout)
 
-    assert any("_rust_unpack" in str(entry.statement)
-               for entry in exc.traceback)
-    assert not any("_py_unpack" in str(entry.statement)
-                   for entry in exc.traceback)
+    assert any(
+        "_rust_unpack" in str(entry.statement) for entry in exc.traceback
+    )
+    assert not any(
+        "_py_unpack" in str(entry.statement) for entry in exc.traceback
+    )
 
 
 @pytest.mark.parametrize(
-    ("name", "package_names"), (
+    ("name", "package_names"),
+    (
         ("neo4j._codec.packstream._rust.v1", ()),
         ("neo4j._codec.packstream._rust", ("v1",)),
         ("neo4j._codec.packstream", ("_rust",)),
-    )
+    ),
 )
 def test_import_module(name, package_names):
     module = importlib.import_module(name)

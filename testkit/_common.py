@@ -25,8 +25,13 @@ TEST_BACKEND_VERSION = os.getenv("TEST_BACKEND_VERSION", "python")
 def run(args, env=None, **kwargs):
     print(args)
     return subprocess.run(
-        args, universal_newlines=True, stdout=sys.stdout, stderr=sys.stderr,
-        check=True, env=env, **kwargs
+        args,
+        text=True,
+        stdout=sys.stdout,
+        stderr=sys.stderr,
+        check=True,
+        env=env,
+        **kwargs,
     )
 
 

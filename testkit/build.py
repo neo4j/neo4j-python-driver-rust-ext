@@ -14,17 +14,7 @@
 # limitations under the License.
 
 
-import shutil
-from pathlib import Path
-import os
-
-from _common import (
-    # DRIVER_REF,
-    # DRIVER_REPO,
-    run,
-    # run_output,
-    run_python,
-)
+from _common import run_python
 
 
 if __name__ == "__main__":
