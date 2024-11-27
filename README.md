@@ -31,7 +31,7 @@ For that, simply make sure you haven't installed `neo4j-rust-ext` but *only* `ne
 For many operating systems and architectures, the pre-built wheels will work out of the box.
 If they don't, pip (or any other Python packaging front-end) will try to build the extension from source.
 Here's what you'll need for this:
- * Rust 1.74.0 or later:  
+ * Rust 1.77 or later:  
    https://www.rust-lang.org/tools/install
  * Further build tools (depending on the platform).  
    E.g., `gcc` on Ubuntu: `sudo apt install gcc`
