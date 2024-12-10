@@ -1,15 +1,16 @@
 .[numpy,pandas,pyarrow]
 
 # for local development
-pre-commit
+pre-commit>=2.21.0  # TODO: 6.0 - bump when support for Python 3.7 is dropped
+isort>=5.11.5  # TODO: 6.0 - bump when support for Python 3.7 is dropped
 
 # for unit tests
-tox
-pytest
-pytest-benchmark
+tox>=4.8.0  # TODO: 6.0 - bump when support for Python 3.7 is dropped
+pytest>=7.4.4  # TODO: 6.0 - bump when support for Python 3.7 is dropped
+pytest-benchmark>=4.0.0
 
 # for Python driver's TestKit backend
-freezegun
+freezegun>=1.5.1
 
 # for packaging
-maturin
+maturin>=1.7.8
