@@ -193,11 +193,18 @@ impl<'a> PackStreamDecoder<'a> {
         if length == 0 {
             return Ok(PyBytes::new(self.py, &[]).into_any().unbind());
         }
-        let data = unsafe {
-            // Safety: we're holding the GIL, and don't interact with Python while using the bytes.
-            // We have to copy the data to uphold the safety invariant.
-            self.bytes.as_bytes()[self.index..self.index + length].to_vec()
-        };
+        let data = with_critical_section(&self.bytes, || {
+            // Safety:
+            //  * We're using a critical section to avoid other threads mutating the bytes while
+            //    we're reading them.
+            //  * We're not mutating the bytes ourselves.
+            //  * We're not interacting with Python while using the bytes as that might indirectly
+            //    cause the bytes to be mutated.
+            unsafe {
+                // We have to copy the data to uphold the safety invariant.
+                self.bytes.as_bytes()[self.index..self.index + length].to_vec()
+            }
+        });
         self.index += length;
         Ok(PyBytes::new(self.py, &data).into_any().unbind())
     }
@@ -243,30 +250,39 @@ impl<'a> PackStreamDecoder<'a> {
     }
 
     fn read_byte(&mut self) -> PyResult<u8> {
-        let byte = unsafe {
-            // Safety: we're holding the GIL, and don't interact with Python while using the bytes
-            *self
-                .bytes
-                .as_bytes()
-                .get(self.index)
-                .ok_or_else(|| PyErr::new::<PyValueError, _>("Nothing to unpack"))?
-        };
+        let byte = with_critical_section(&self.bytes, || {
+            // Safety:
+            //  * We're using a critical section to avoid other threads mutating the bytes while
+            //    we're reading them.
+            //  * We're not mutating the bytes ourselves.
+            //  * We're not interacting with Python while using the bytes as that might indirectly
+            //    cause the bytes to be mutated.
+            unsafe { self.bytes.as_bytes().get(self.index).copied() }
+        })
+        .ok_or_else(|| PyErr::new::<PyValueError, _>("Nothing to unpack"))?;
         self.index += 1;
         Ok(byte)
     }
 
     fn read_n_bytes<const N: usize>(&mut self) -> PyResult<[u8; N]> {
         let to = self.index + N;
-        unsafe {
-            // Safety: we're holding the GIL, and don't interact with Python while using the bytes.
-            match self.bytes.as_bytes().get(self.index..to) {
-                Some(b) => {
-                    self.index = to;
-                    Ok(<[u8; N]>::try_from(b).expect("we know the slice has exactly N values"))
+        with_critical_section(&self.bytes, || {
+            // Safety:
+            //  * We're using a critical section to avoid other threads mutating the bytes while
+            //    we're reading them.
+            //  * We're not mutating the bytes ourselves.
+            //  * We're not interacting with Python while using the bytes as that might indirectly
+            //    cause the bytes to be mutated.
+            unsafe {
+                match self.bytes.as_bytes().get(self.index..to) {
+                    Some(b) => {
+                        self.index = to;
+                        Ok(<[u8; N]>::try_from(b).expect("we know the slice has exactly N values"))
+                    }
+                    None => Err(PyErr::new::<PyValueError, _>("Nothing to unpack")),
                 }
-                None => Err(PyErr::new::<PyValueError, _>("Nothing to unpack")),
             }
-        }
+        })
     }
 
     fn read_u8(&mut self) -> PyResult<usize> {

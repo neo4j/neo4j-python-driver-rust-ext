@@ -21,7 +21,6 @@ use pyo3::prelude::*;
 use pyo3::types::{PyBytes, PyTuple};
 use pyo3::BoundObject;
 
-/// A Python module implemented in Rust.
 #[pymodule(gil_used = false)]
 #[pyo3(name = "_rust")]
 fn packstream(m: &Bound<PyModule>) -> PyResult<()> {
