@@ -19,7 +19,7 @@ use pyo3::basic::CompareOp;
 use pyo3::exceptions::PyValueError;
 use pyo3::prelude::*;
 use pyo3::types::{PyBytes, PyTuple};
-use pyo3::BoundObject;
+use pyo3::IntoPyObjectExt;
 
 #[pymodule(gil_used = false)]
 #[pyo3(name = "_rust")]
@@ -101,11 +101,8 @@ impl Structure {
 
     fn __richcmp__(&self, other: &Self, op: CompareOp, py: Python<'_>) -> PyResult<PyObject> {
         Ok(match op {
-            CompareOp::Eq => self.eq(other, py)?.into_pyobject(py)?.into_any().unbind(),
-            CompareOp::Ne => (!self.eq(other, py)?)
-                .into_pyobject(py)?
-                .into_any()
-                .unbind(),
+            CompareOp::Eq => self.eq(other, py)?.into_py_any(py)?,
+            CompareOp::Ne => (!self.eq(other, py)?).into_py_any(py)?,
             _ => py.NotImplemented(),
         })
     }
