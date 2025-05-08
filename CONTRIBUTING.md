@@ -54,7 +54,7 @@ Remember that many community members have become regular contributors and some a
 ## Specifically for this project:
 
 ### Setting up the Development Environment
- * Install Python 3.8+
+ * Install Python 3.10+
  * Install the requirements
    ```bash
    $ python3 -m pip install -U pip
