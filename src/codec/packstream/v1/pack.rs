@@ -22,12 +22,12 @@ use pyo3::sync::GILOnceCell;
 use pyo3::types::{PyBytes, PyDict, PyString, PyType};
 use pyo3::{intern, IntoPyObjectExt};
 
+use super::super::Structure;
 use super::{
     BYTES_16, BYTES_32, BYTES_8, FALSE, FLOAT_64, INT_16, INT_32, INT_64, INT_8, LIST_16, LIST_32,
     LIST_8, MAP_16, MAP_32, MAP_8, NULL, STRING_16, STRING_32, STRING_8, TINY_LIST, TINY_MAP,
     TINY_STRING, TINY_STRUCT, TRUE,
 };
-use crate::Structure;
 
 #[derive(Debug)]
 struct TypeMappings {

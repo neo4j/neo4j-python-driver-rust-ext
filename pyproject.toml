@@ -63,7 +63,7 @@ build-backend = "maturin"
 
 [tool.maturin]
 features = ["pyo3/extension-module", "pyo3/generate-import-lib"]
-module-name = "neo4j._codec.packstream._rust"
+module-name = "neo4j._rust"
 exclude = [
     "/.editorconfig",
     ".gitignore",
