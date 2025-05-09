@@ -22,7 +22,7 @@ authors = [
     {name = "Neo4j, Inc.", email = "drivers@neo4j.com"},
 ]
 dependencies = [
-    "neo4j == 5.28.0"
+    "neo4j == 5.28.1"
 ]
 requires-python = ">=3.10"
 keywords = ["neo4j", "graph", "database"]
@@ -39,7 +39,7 @@ classifiers = [
     "Topic :: Database",
     "Topic :: Software Development",
 ]
-version = "5.28.0.0"
+version = "5.28.1.0"
 
 [project.urls]
 Homepage = "https://neo4j.com/"
@@ -55,7 +55,7 @@ pandas = ["neo4j[pandas]"]
 pyarrow = ["neo4j[pyarrow]"]
 
 [build-system]
-requires = ["maturin ~= 1.6.0"]
+requires = ["maturin ~= 1.8.3"]
 build-backend = "maturin"
 
 [tool.maturin]

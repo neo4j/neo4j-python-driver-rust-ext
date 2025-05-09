@@ -14,9 +14,10 @@
 // limitations under the License.
 
 use pyo3::exceptions::PyValueError;
-use pyo3::intern;
 use pyo3::prelude::*;
+use pyo3::sync::with_critical_section;
 use pyo3::types::{IntoPyDict, PyByteArray, PyBytes, PyDict, PyList, PyTuple};
+use pyo3::{intern, IntoPyObjectExt};
 
 use super::{
     BYTES_16, BYTES_32, BYTES_8, FALSE, FLOAT_64, INT_16, INT_32, INT_64, INT_8, LIST_16, LIST_32,
@@ -70,15 +71,15 @@ impl<'a> PackStreamDecoder<'a> {
 
         Ok(match marker {
             // tiny int
-            _ if marker as i8 >= -16 => (marker as i8).to_object(self.py),
+            _ if marker as i8 >= -16 => (marker as i8).into_py_any(self.py)?,
             NULL => self.py.None(),
-            FLOAT_64 => self.read_f64()?.to_object(self.py),
-            FALSE => false.to_object(self.py),
-            TRUE => true.to_object(self.py),
-            INT_8 => self.read_i8()?.to_object(self.py),
-            INT_16 => self.read_i16()?.to_object(self.py),
-            INT_32 => self.read_i32()?.to_object(self.py),
-            INT_64 => self.read_i64()?.to_object(self.py),
+            FLOAT_64 => self.read_f64()?.into_py_any(self.py)?,
+            FALSE => false.into_py_any(self.py)?,
+            TRUE => true.into_py_any(self.py)?,
+            INT_8 => self.read_i8()?.into_py_any(self.py)?,
+            INT_16 => self.read_i16()?.into_py_any(self.py)?,
+            INT_32 => self.read_i32()?.into_py_any(self.py)?,
+            INT_64 => self.read_i64()?.into_py_any(self.py)?,
             BYTES_8 => {
                 let len = self.read_u8()?;
                 self.read_bytes(len)?
@@ -143,33 +144,40 @@ impl<'a> PackStreamDecoder<'a> {
 
     fn read_list(&mut self, length: usize) -> PyResult<PyObject> {
         if length == 0 {
-            return Ok(PyList::empty_bound(self.py).to_object(self.py));
+            return Ok(PyList::empty(self.py).into_any().unbind());
         }
         let mut items = Vec::with_capacity(length);
         for _ in 0..length {
             items.push(self.read()?);
         }
-        Ok(items.to_object(self.py))
+        items.into_py_any(self.py)
     }
 
     fn read_string(&mut self, length: usize) -> PyResult<PyObject> {
         if length == 0 {
-            return Ok("".to_object(self.py));
+            return "".into_py_any(self.py);
         }
-        let data = unsafe {
-            // Safety: we're holding the GIL, and don't interact with Python while using the bytes
-            let data = &self.bytes.as_bytes()[self.index..self.index + length];
-            // We have to copy the data to uphold the safety invariant.
-            String::from_utf8(data.into())
-                .map_err(|e| PyErr::new::<PyValueError, _>(e.to_string()))?
-        };
+        let data = with_critical_section(&self.bytes, || {
+            // Safety:
+            //  * We're using a critical section to avoid other threads mutating the bytes while
+            //    we're reading them.
+            //  * We're not mutating the bytes ourselves.
+            //  * We're not interacting with Python while using the bytes as that might indirectly
+            //    cause the bytes to be mutated.
+            unsafe {
+                let data = &self.bytes.as_bytes()[self.index..self.index + length];
+                // We have to copy the data to uphold the safety invariant.
+                String::from_utf8(Vec::from(data))
+            }
+        });
+        let data = data.map_err(|e| PyErr::new::<PyValueError, _>(e.to_string()))?;
         self.index += length;
-        Ok(data.to_object(self.py))
+        data.into_py_any(self.py)
     }
 
     fn read_map(&mut self, length: usize) -> PyResult<PyObject> {
         if length == 0 {
-            return Ok(PyDict::new_bound(self.py).to_object(self.py));
+            return Ok(PyDict::new(self.py).into_any().unbind());
         }
         let mut key_value_pairs: Vec<(PyObject, PyObject)> = Vec::with_capacity(length);
         for _ in 0..length {
@@ -178,20 +186,27 @@ impl<'a> PackStreamDecoder<'a> {
             let value = self.read()?;
             key_value_pairs.push((key, value));
         }
-        Ok(key_value_pairs.into_py_dict_bound(self.py).into())
+        Ok(key_value_pairs.into_py_dict(self.py)?.into())
     }
 
     fn read_bytes(&mut self, length: usize) -> PyResult<PyObject> {
         if length == 0 {
-            return Ok(PyBytes::new_bound(self.py, &[]).to_object(self.py));
+            return Ok(PyBytes::new(self.py, &[]).into_any().unbind());
         }
-        let data = unsafe {
-            // Safety: we're holding the GIL, and don't interact with Python while using the bytes.
-            // We have to copy the data to uphold the safety invariant.
-            self.bytes.as_bytes()[self.index..self.index + length].to_vec()
-        };
+        let data = with_critical_section(&self.bytes, || {
+            // Safety:
+            //  * We're using a critical section to avoid other threads mutating the bytes while
+            //    we're reading them.
+            //  * We're not mutating the bytes ourselves.
+            //  * We're not interacting with Python while using the bytes as that might indirectly
+            //    cause the bytes to be mutated.
+            unsafe {
+                // We have to copy the data to uphold the safety invariant.
+                self.bytes.as_bytes()[self.index..self.index + length].to_vec()
+            }
+        });
         self.index += length;
-        Ok(PyBytes::new_bound(self.py, &data).to_object(self.py))
+        Ok(PyBytes::new(self.py, &data).into_any().unbind())
     }
 
     fn read_struct(&mut self, length: usize) -> PyResult<PyObject> {
@@ -200,7 +215,10 @@ impl<'a> PackStreamDecoder<'a> {
         for _ in 0..length {
             fields.push(self.read()?)
         }
-        let mut bolt_struct = Structure { tag, fields }.into_py(self.py);
+        let mut bolt_struct = Structure { tag, fields }
+            .into_pyobject(self.py)?
+            .into_any()
+            .unbind();
         let Some(hooks) = &self.hydration_hooks else {
             return Ok(bolt_struct);
         };
@@ -208,8 +226,9 @@ impl<'a> PackStreamDecoder<'a> {
         let attr = bolt_struct.getattr(self.py, intern!(self.py, "__class__"))?;
         if let Some(res) = hooks.get_item(attr)? {
             bolt_struct = res
-                .call(PyTuple::new_bound(self.py, [bolt_struct]), None)?
-                .into_py(self.py);
+                .call(PyTuple::new(self.py, [bolt_struct])?, None)?
+                .into_any()
+                .unbind();
         }
 
         Ok(bolt_struct)
@@ -231,30 +250,39 @@ impl<'a> PackStreamDecoder<'a> {
     }
 
     fn read_byte(&mut self) -> PyResult<u8> {
-        let byte = unsafe {
-            // Safety: we're holding the GIL, and don't interact with Python while using the bytes
-            *self
-                .bytes
-                .as_bytes()
-                .get(self.index)
-                .ok_or_else(|| PyErr::new::<PyValueError, _>("Nothing to unpack"))?
-        };
+        let byte = with_critical_section(&self.bytes, || {
+            // Safety:
+            //  * We're using a critical section to avoid other threads mutating the bytes while
+            //    we're reading them.
+            //  * We're not mutating the bytes ourselves.
+            //  * We're not interacting with Python while using the bytes as that might indirectly
+            //    cause the bytes to be mutated.
+            unsafe { self.bytes.as_bytes().get(self.index).copied() }
+        })
+        .ok_or_else(|| PyErr::new::<PyValueError, _>("Nothing to unpack"))?;
         self.index += 1;
         Ok(byte)
     }
 
     fn read_n_bytes<const N: usize>(&mut self) -> PyResult<[u8; N]> {
         let to = self.index + N;
-        unsafe {
-            // Safety: we're holding the GIL, and don't interact with Python while using the bytes.
-            match self.bytes.as_bytes().get(self.index..to) {
-                Some(b) => {
-                    self.index = to;
-                    Ok(<[u8; N]>::try_from(b).expect("we know the slice has exactly N values"))
+        with_critical_section(&self.bytes, || {
+            // Safety:
+            //  * We're using a critical section to avoid other threads mutating the bytes while
+            //    we're reading them.
+            //  * We're not mutating the bytes ourselves.
+            //  * We're not interacting with Python while using the bytes as that might indirectly
+            //    cause the bytes to be mutated.
+            unsafe {
+                match self.bytes.as_bytes().get(self.index..to) {
+                    Some(b) => {
+                        self.index = to;
+                        Ok(<[u8; N]>::try_from(b).expect("we know the slice has exactly N values"))
+                    }
+                    None => Err(PyErr::new::<PyValueError, _>("Nothing to unpack")),
                 }
-                None => Err(PyErr::new::<PyValueError, _>("Nothing to unpack")),
             }
-        }
+        })
     }
 
     fn read_u8(&mut self) -> PyResult<usize> {

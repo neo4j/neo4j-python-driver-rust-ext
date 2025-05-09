@@ -19,16 +19,17 @@ use pyo3::basic::CompareOp;
 use pyo3::exceptions::PyValueError;
 use pyo3::prelude::*;
 use pyo3::types::{PyBytes, PyTuple};
+use pyo3::IntoPyObjectExt;
 
-/// A Python module implemented in Rust.
-#[pymodule]
+#[pymodule(gil_used = false)]
 #[pyo3(name = "_rust")]
 fn packstream(m: &Bound<PyModule>) -> PyResult<()> {
     let py = m.py();
 
     m.add_class::<Structure>()?;
 
-    let mod_v1 = PyModule::new_bound(py, "v1")?;
+    let mod_v1 = PyModule::new(py, "v1")?;
+    mod_v1.gil_used(false)?;
     v1::register(&mod_v1)?;
     m.add_submodule(&mod_v1)?;
     register_package(&mod_v1, "v1")?;
@@ -40,9 +41,9 @@ fn packstream(m: &Bound<PyModule>) -> PyResult<()> {
 // https://github.com/PyO3/pyo3/issues/1517#issuecomment-808664021
 fn register_package(m: &Bound<PyModule>, name: &str) -> PyResult<()> {
     let py = m.py();
-    let module_name = format!("neo4j._codec.packstream._rust.{name}").into_py(py);
+    let module_name = format!("neo4j._codec.packstream._rust.{name}").into_pyobject(py)?;
 
-    py.import_bound("sys")?
+    py.import("sys")?
         .getattr("modules")?
         .set_item(&module_name, m)?;
     m.setattr("__name__", &module_name)?;
@@ -73,12 +74,12 @@ impl Structure {
 
     #[getter(tag)]
     fn read_tag<'py>(&self, py: Python<'py>) -> Bound<'py, PyBytes> {
-        PyBytes::new_bound(py, &[self.tag])
+        PyBytes::new(py, &[self.tag])
     }
 
     #[getter(fields)]
-    fn read_fields<'py>(&self, py: Python<'py>) -> Bound<'py, PyTuple> {
-        PyTuple::new_bound(py, &self.fields)
+    fn read_fields<'py>(&self, py: Python<'py>) -> PyResult<Bound<'py, PyTuple>> {
+        PyTuple::new(py, &self.fields)
     }
 
     fn eq(&self, other: &Self, py: Python<'_>) -> PyResult<bool> {
@@ -100,8 +101,8 @@ impl Structure {
 
     fn __richcmp__(&self, other: &Self, op: CompareOp, py: Python<'_>) -> PyResult<PyObject> {
         Ok(match op {
-            CompareOp::Eq => self.eq(other, py)?.into_py(py),
-            CompareOp::Ne => (!self.eq(other, py)?).into_py(py),
+            CompareOp::Eq => self.eq(other, py)?.into_py_any(py)?,
+            CompareOp::Ne => (!self.eq(other, py)?).into_py_any(py)?,
             _ => py.NotImplemented(),
         })
     }
