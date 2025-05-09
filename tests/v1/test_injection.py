@@ -112,3 +112,36 @@ def test_import_module(name, package_names):
     for package_name in package_names:
         package = getattr(module, package_name)
         assert package.__name__ == f"{name}.{package_name}"
+
+
+def test_rust_struct_access():
+    tag = b"F"
+    fields = ["foo", False, 42, 3.14, b"bar"]
+    struct = Structure(tag, *fields)
+
+    assert struct.tag == tag
+    assert isinstance(struct.tag, bytes)
+    assert struct.fields == tuple(fields)
+
+
+def test_rust_struct_equal():
+    struct1 = Structure(b"F", "foo", False, 42, 3.14, b"bar")
+    struct2 = Structure(b"F", "foo", False, 42, 3.14, b"bar")
+    assert struct1 == struct2
+    # [noqa] for testing correctness of equality
+    assert not struct1 != struct2  # noqa: SIM202
+
+
+@pytest.mark.parametrize(
+    "args",
+    (
+        (b"F", "foo", True, 42, 3.14, b"bar"),
+        (b"f", "foo", False, 42, 3.14, b"baz"),
+    ),
+)
+def test_rust_struct_not_equal(args):
+    struct1 = Structure(b"F", "foo", False, 42, 3.14, b"bar")
+    struct2 = Structure(*args)
+    assert struct1 != struct2
+    # [noqa] for testing correctness of equality
+    assert not struct1 == struct2  # noqa: SIM201

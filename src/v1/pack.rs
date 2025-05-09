@@ -17,10 +17,10 @@ use std::borrow::Cow;
 use std::sync::atomic::{AtomicBool, Ordering};
 
 use pyo3::exceptions::{PyImportError, PyOverflowError, PyTypeError, PyValueError};
-use pyo3::intern;
 use pyo3::prelude::*;
 use pyo3::sync::GILOnceCell;
 use pyo3::types::{PyBytes, PyDict, PyString, PyType};
+use pyo3::{intern, IntoPyObjectExt};
 
 use super::{
     BYTES_16, BYTES_32, BYTES_8, FALSE, FLOAT_64, INT_16, INT_32, INT_64, INT_8, LIST_16, LIST_32,
@@ -68,31 +68,31 @@ impl TypeMappings {
                 .ok_or_else(|| {
                     PyErr::new::<PyValueError, _>("Type mappings are missing INT_TYPES.")
                 })?
-                .into_py(py),
+                .into_py_any(py)?,
             float_types: locals
                 .get_item("FLOAT_TYPES")?
                 .ok_or_else(|| {
                     PyErr::new::<PyValueError, _>("Type mappings are missing FLOAT_TYPES.")
                 })?
-                .into_py(py),
+                .into_py_any(py)?,
             sequence_types: locals
                 .get_item("SEQUENCE_TYPES")?
                 .ok_or_else(|| {
                     PyErr::new::<PyValueError, _>("Type mappings are missing SEQUENCE_TYPES.")
                 })?
-                .into_py(py),
+                .into_py_any(py)?,
             mapping_types: locals
                 .get_item("MAPPING_TYPES")?
                 .ok_or_else(|| {
                     PyErr::new::<PyValueError, _>("Type mappings are missing MAPPING_TYPES.")
                 })?
-                .into_py(py),
+                .into_py_any(py)?,
             bytes_types: locals
                 .get_item("BYTES_TYPES")?
                 .ok_or_else(|| {
                     PyErr::new::<PyValueError, _>("Type mappings are missing BYTES_TYPES.")
                 })?
-                .into_py(py),
+                .into_py_any(py)?,
         })
     }
 }
@@ -103,9 +103,9 @@ static TYPE_MAPPINGS_INIT: AtomicBool = AtomicBool::new(false);
 fn get_type_mappings(py: Python<'_>) -> PyResult<&'static TypeMappings> {
     let mappings = TYPE_MAPPINGS.get_or_try_init(py, || {
         fn init(py: Python<'_>) -> PyResult<TypeMappings> {
-            let locals = PyDict::new_bound(py);
-            py.run_bound(
-                "from neo4j._codec.packstream.v1.types import *",
+            let locals = PyDict::new(py);
+            py.run(
+                c"from neo4j._codec.packstream.v1.types import *",
                 None,
                 Some(&locals),
             )?;
@@ -132,7 +132,7 @@ pub(super) fn pack<'py>(
     let type_mappings = get_type_mappings(py)?;
     let mut encoder = PackStreamEncoder::new(dehydration_hooks, type_mappings);
     encoder.write(value)?;
-    Ok(PyBytes::new_bound(py, &encoder.buffer))
+    Ok(PyBytes::new(py, &encoder.buffer))
 }
 
 struct PackStreamEncoder<'a> {
@@ -176,7 +176,7 @@ impl<'a> PackStreamEncoder<'a> {
             return self.write_int(value);
         }
 
-        if value.is_instance(&PyType::new_bound::<PyString>(py))? {
+        if value.is_instance(&PyType::new::<PyString>(py))? {
             return self.write_string(value.extract::<&str>()?);
         }
 
@@ -187,14 +187,14 @@ impl<'a> PackStreamEncoder<'a> {
         if value.is_instance(self.type_mappings.sequence_types.bind(py))? {
             let size = Self::usize_to_u64(value.len()?)?;
             self.write_list_header(size)?;
-            return value.iter()?.try_for_each(|item| self.write(&item?));
+            return value.try_iter()?.try_for_each(|item| self.write(&item?));
         }
 
         if value.is_instance(self.type_mappings.mapping_types.bind(py))? {
             let size = Self::usize_to_u64(value.getattr(intern!(py, "keys"))?.call0()?.len()?)?;
             self.write_dict_header(size)?;
             let items = value.getattr(intern!(py, "items"))?.call0()?;
-            return items.iter()?.try_for_each(|item| {
+            return items.try_iter()?.try_for_each(|item| {
                 let (key, value) = item?.extract::<(Bound<PyAny>, Bound<PyAny>)>()?;
                 let key = match key.extract::<&str>() {
                     Ok(key) => key,
