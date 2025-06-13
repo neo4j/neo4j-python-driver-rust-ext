@@ -207,9 +207,6 @@ select = [
     "RSE",
     # check return statements
     "RET",
-    # TODO: 6.0 - enable and add __slots__ to applicable classes
-    # # check __slots__ usage
-    # "SLOT",
     # check type-checking usage
     "TCH",
     # copyright notice
