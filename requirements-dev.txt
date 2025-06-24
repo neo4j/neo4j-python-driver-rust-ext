@@ -8,6 +8,7 @@ isort>=5.11.5  # TODO: 6.0 - bump when support for Python 3.7 is dropped
 tox>=4.8.0  # TODO: 6.0 - bump when support for Python 3.7 is dropped
 pytest>=7.4.4  # TODO: 6.0 - bump when support for Python 3.7 is dropped
 pytest-benchmark>=4.0.0
+pytest-mock>=3.14.1
 
 # for Python driver's TestKit backend
 freezegun>=1.5.1
