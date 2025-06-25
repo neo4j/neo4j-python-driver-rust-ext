@@ -16,7 +16,11 @@
 [project]
 name = "neo4j-rust-ext"
 description = "Rust Extensions for a Faster Neo4j Bolt Driver for Python"
-license = {text = "Apache License, Version 2.0"}
+license = "Apache-2.0"
+license-files = [
+    "LICENSE*.txt",
+    "NOTICE*.txt",
+]
 readme = "README.md"
 authors = [
     {name = "Neo4j, Inc.", email = "drivers@neo4j.com"},
@@ -29,7 +33,6 @@ keywords = ["neo4j", "graph", "database"]
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Developers",
-    "License :: OSI Approved :: Apache Software License",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
@@ -55,7 +58,7 @@ pandas = ["neo4j[pandas]"]
 pyarrow = ["neo4j[pyarrow]"]
 
 [build-system]
-requires = ["maturin ~= 1.8.3"]
+requires = ["maturin ~= 1.9.0"]
 build-backend = "maturin"
 
 [tool.maturin]

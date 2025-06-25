@@ -3,6 +3,7 @@ Changelog
 
 ## Next Release
 * Drop support for Python 3.7, 3.8, and 3.9.
+* Update licensing meta data to be PEP 639 compliant.
 
 
 ## Next Release
