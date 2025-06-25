@@ -2,6 +2,10 @@ Changelog
 =========
 
 ## Next Release
+* Update licensing meta data to be PEP 639 compliant.
+
+
+## Next Release
 * Moved repository:  
   from https://github.com/neo4j-drivers/neo4j-python-driver-rust-ext  
   to https://github.com/neo4j/neo4j-python-driver-rust-ext
