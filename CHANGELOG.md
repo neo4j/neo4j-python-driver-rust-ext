@@ -2,6 +2,7 @@ Changelog
 =========
 
 ## Next Release
+* Update licensing meta data to be PEP 639 compliant.
 
 
 ## 5.28.1.0 (2025-02-10)
