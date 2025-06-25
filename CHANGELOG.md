@@ -5,7 +5,35 @@ Changelog
 * Update licensing meta data to be PEP 639 compliant.
 
 
-## Next Release
+## 5.28.1.0 (2025-02-10)
+* Target driver version 5.28.1
+
+
+## 5.28.0.0 (2025-02-05)
+* Target driver version 5.28.0
+
+
+## 5.27.0.0 (2024-11-28)
+* Target driver version 5.27.0
+
+
+## 5.26.0.0 (2024-11-01)
+* Target driver version 5.26.0
+* Add support for Python 3.13
+* Bump PyO3 to 0.22.4
+* Introduce `isort` and `ruff`
+
+
+## 5.25.0.0 (2024-09-26)
+* Target driver version 5.25.0
+
+
+## 5.24.0.0 (2024-08-29)
+* Target driver version 5.24.0
+
+
+## 5.23.1.0 (2024-08-05)
+* Target driver version 5.23.1
 * Moved repository:  
   from https://github.com/neo4j-drivers/neo4j-python-driver-rust-ext  
   to https://github.com/neo4j/neo4j-python-driver-rust-ext
