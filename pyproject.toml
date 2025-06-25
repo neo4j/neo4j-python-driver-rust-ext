@@ -16,7 +16,11 @@
 [project]
 name = "neo4j-rust-ext"
 description = "Rust Extensions for a Faster Neo4j Bolt Driver for Python"
-license = {text = "Apache License, Version 2.0"}
+license = "Apache-2.0"
+license-files = [
+    "LICENSE*.txt",
+    "NOTICE*.txt",
+]
 readme = "README.md"
 authors = [
     {name = "Neo4j, Inc.", email = "drivers@neo4j.com"},
@@ -24,16 +28,12 @@ authors = [
 dependencies = [
     "neo4j == 5.28.1"
 ]
-requires-python = ">=3.7"
+requires-python = ">=3.10"
 keywords = ["neo4j", "graph", "database"]
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Developers",
-    "License :: OSI Approved :: Apache Software License",
     "Operating System :: OS Independent",
-    "Programming Language :: Python :: 3.7",
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
@@ -58,7 +58,7 @@ pandas = ["neo4j[pandas]"]
 pyarrow = ["neo4j[pyarrow]"]
 
 [build-system]
-requires = ["maturin ~= 1.8.3"]
+requires = ["maturin ~= 1.9.0"]
 build-backend = "maturin"
 
 [tool.maturin]
@@ -107,8 +107,7 @@ extend-exclude = [
 preview = true  # to get CPY lints
 extend-ignore = [
     "RUF002",  # allow ’ (RIGHT SINGLE QUOTATION MARK) to be used as an apostrophe (e.g. "it’s")
-    "SIM117",  # TODO: when Python 3.10+ is the minimum,
-               #       we can start to use multi-item `with` statements
+
     # pydocstyle
     "D1",   # disable check for undocumented items (way too noisy)
     "D203", # `one-blank-line-before-class`
