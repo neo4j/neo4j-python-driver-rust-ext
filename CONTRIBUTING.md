@@ -95,6 +95,10 @@ python -m tox -e py312-test -- --benchmark-only --benchmark-autosave --benchmark
 python -m tox -e py312-test -- --benchmark-only --benchmark-autosave --benchmark-group-by=fullname --benchmark-compare
 ```
 
+### Changelog Entry
+This project uses [towncrier](https://towncrier.readthedocs.io/en/stable) to manage the changelog.
+See [changelog.d/README.md](changelog.d/README.md) for more information on how to add entries to the changelog.
+
 
 ## Got an idea for a new project?
 

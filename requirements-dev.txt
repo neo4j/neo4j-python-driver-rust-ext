@@ -14,3 +14,4 @@ freezegun>=1.5.1
 
 # for packaging
 maturin>=1.8.3
+towncrier>=24.8.0
