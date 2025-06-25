@@ -24,16 +24,13 @@ authors = [
 dependencies = [
     "neo4j == 5.28.1"
 ]
-requires-python = ">=3.7"
+requires-python = ">=3.10"
 keywords = ["neo4j", "graph", "database"]
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Developers",
     "License :: OSI Approved :: Apache Software License",
     "Operating System :: OS Independent",
-    "Programming Language :: Python :: 3.7",
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
@@ -107,8 +104,7 @@ extend-exclude = [
 preview = true  # to get CPY lints
 extend-ignore = [
     "RUF002",  # allow ’ (RIGHT SINGLE QUOTATION MARK) to be used as an apostrophe (e.g. "it’s")
-    "SIM117",  # TODO: when Python 3.10+ is the minimum,
-               #       we can start to use multi-item `with` statements
+
     # pydocstyle
     "D1",   # disable check for undocumented items (way too noisy)
     "D203", # `one-blank-line-before-class`

@@ -2,6 +2,10 @@ Changelog
 =========
 
 ## Next Release
+* Drop support for Python 3.7, 3.8, and 3.9.
+
+
+## Next Release
 * Moved repository:  
   from https://github.com/neo4j-drivers/neo4j-python-driver-rust-ext  
   to https://github.com/neo4j/neo4j-python-driver-rust-ext
