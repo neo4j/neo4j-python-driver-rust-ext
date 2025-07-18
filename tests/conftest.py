@@ -34,16 +34,19 @@ def pytest_benchmark_group_stats(config, benchmarks, group_by):
             base_name = bench["fullname"]
         else:
             base_name = bench["fullname"][:param_start]
-        params = bench["params"]
+        params = bench.get("params", None)
+        if params is None:
+            result[base_name].append(bench)
+            continue
         ext = params.get("ext", None)
-        if ext:
-            param_keys = sorted(params.keys())
-            name_params = "-".join(
-                str(params[k]) for k in param_keys if k != "ext"
-            )
-            group_name = f"{base_name}[{name_params}]"
-        else:
-            group_name = base_name
+        if ext is None:
+            result[base_name].append(bench)
+            continue
+        param_keys = sorted(params.keys())
+        name_params = "-".join(
+            str(params[k]) for k in param_keys if k != "ext"
+        )
+        group_name = f"{base_name}[{name_params}]"
         result[group_name].append(bench)
 
     outcome.force_result(result.items())

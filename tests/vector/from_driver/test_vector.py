@@ -20,7 +20,6 @@ import math
 import random
 import struct
 import sys
-import timeit
 import typing as t
 
 import pytest
@@ -130,12 +129,12 @@ def _mock_mask_extensions(mocker, used_ext):
         _swap_endian_unchecked_np,
         _swap_endian_unchecked_py,
         _swap_endian_unchecked_rust,
-        _VecF64,
         _VecF32,
-        _VecI64,
-        _VecI32,
-        _VecI16,
+        _VecF64,
         _VecI8,
+        _VecI16,
+        _VecI32,
+        _VecI64,
     )
 
     vec_types = (_VecF64, _VecF32, _VecI64, _VecI32, _VecI16, _VecI8)
@@ -150,11 +149,11 @@ def _mock_mask_extensions(mocker, used_ext):
             for vec_type in vec_types:
                 mocker.patch(
                     f"neo4j.vector.{vec_type.__name__}.from_native",
-                    new=vec_type._from_native_np
+                    new=vec_type._from_native_np,
                 )
                 mocker.patch(
                     f"neo4j.vector.{vec_type.__name__}.to_native",
-                    new=vec_type._to_native_np
+                    new=vec_type._to_native_np,
                 )
         case "rust":
             if _swap_endian_unchecked_rust is None:
@@ -166,11 +165,11 @@ def _mock_mask_extensions(mocker, used_ext):
             for vec_type in vec_types:
                 mocker.patch(
                     f"neo4j.vector.{vec_type.__name__}.from_native",
-                    new=vec_type._from_native_rust
+                    new=vec_type._from_native_rust,
                 )
                 mocker.patch(
                     f"neo4j.vector.{vec_type.__name__}.to_native",
-                    new=vec_type._to_native_rust
+                    new=vec_type._to_native_rust,
                 )
         case "python":
             mocker.patch(
@@ -180,56 +179,14 @@ def _mock_mask_extensions(mocker, used_ext):
             for vec_type in vec_types:
                 mocker.patch(
                     f"neo4j.vector.{vec_type.__name__}.from_native",
-                    new=vec_type._from_native_py
+                    new=vec_type._from_native_py,
                 )
                 mocker.patch(
                     f"neo4j.vector.{vec_type.__name__}.to_native",
-                    new=vec_type._to_native_py
+                    new=vec_type._to_native_py,
                 )
         case _:
             raise ValueError(f"Invalid ext value {used_ext}")
-
-
-@pytest.mark.parametrize("ext", ("numpy", "rust", "python"))
-@pytest.mark.parametrize("type_size", (2, 4, 8))
-@pytest.mark.parametrize("length", (1, 100_000))
-def test_bench_swap_endian(benchmark, mocker, ext, type_size, length):
-    data = bytes(i % 256 for i in range(8 * length))
-    _mock_mask_extensions(mocker, ext)
-    rounds = max(min(1_000_000 // length, 100_000), 100)
-
-    benchmark.pedantic(lambda: _swap_endian(type_size, data), rounds=rounds)
-
-
-@pytest.mark.parametrize("ext", ("numpy", "rust", "python"))
-@pytest.mark.parametrize("dtype", ("i8", "i16", "i32", "i64", "f32", "f64"))
-@pytest.mark.parametrize("as_iter", (True, False))
-@pytest.mark.parametrize("length", (1, 1_000))
-def test_bench_from_native(benchmark, mocker, ext, dtype, as_iter, length):
-    raw_data = bytes(i % 256 for i in range(8 * length))
-    data = Vector.from_bytes(raw_data, dtype).to_native()
-    rounds = max(min(1_000_000 // length, 100_000), 100)
-    _mock_mask_extensions(mocker, ext)
-    if as_iter:
-        def work():
-            Vector.from_native(iter(data), dtype)
-    else:
-        def work():
-            Vector.from_native(data, dtype)
-
-    benchmark.pedantic(work, rounds=rounds)
-
-
-@pytest.mark.parametrize("ext", ("numpy", "rust", "python"))
-@pytest.mark.parametrize("dtype", ("i8", "i16", "i32", "i64", "f32", "f64"))
-@pytest.mark.parametrize("length", (1, 1_000))
-def test_bench_to_native(benchmark, mocker, ext, dtype, length):
-    print(f"Testing {ext} for {dtype}")
-    data = Vector.from_bytes(bytes(i % 256 for i in range(8 * length)), dtype)
-    rounds = max(min(1_000_000 // length, 100_000), 100)
-    _mock_mask_extensions(mocker, ext)
-
-    benchmark.pedantic(lambda: data.to_native(), rounds=rounds)
 
 
 @pytest.mark.parametrize("ext", ("numpy", "rust", "python"))
@@ -344,7 +301,7 @@ def test_from_native_random(
     repeat: int,
     size: int,
     ext: str,
-    mocker: t.Any
+    mocker: t.Any,
 ) -> None:
     _mock_mask_extensions(mocker, ext)
     type_size = _get_type_size(dtype)
@@ -536,7 +493,7 @@ def test_from_native_special_values(
         ("f64", "1.0"),
         ("f64", None),
         ("f64", 1),
-    )
+    ),
 )
 @pytest.mark.parametrize("ext", ("numpy", "rust", "python"))
 def test_from_native_wrong_type(
@@ -564,7 +521,7 @@ def test_from_native_wrong_type(
         ("i32", 2147483648),
         ("i64", -9223372036854775809),
         ("i64", 9223372036854775808),
-    )
+    ),
 )
 @pytest.mark.parametrize("ext", ("numpy", "rust", "python"))
 def test_from_native_overflow(
