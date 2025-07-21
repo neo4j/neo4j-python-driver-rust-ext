@@ -26,6 +26,11 @@ However, make sure the versions match if you do so or leave the version of one o
 If you experience issues with the driver, consider troubleshooting without the Rust extension first.
 For that, simply make sure you haven't installed `neo4j-rust-ext` but *only* `neo4j`.
 
+> [!NOTE]
+> For pre-release versions of the driver (alpha, beta, etc.), the version scheme is slightly different:  
+> `neo4j == X.Y.ZaA` (for alpha - `a` is not a variable number but a literal) needs to be replaced with `neo4j-rust-ext == X.Y.Z.NaA` where `N` needs to be explicitly specified and cannot be `*`.
+> This is a limitation of allowed version identifiers in the Python packaging ecosystem.
+
 
 ## Requirements
 For many operating systems and architectures, the pre-built wheels will work out of the box.
