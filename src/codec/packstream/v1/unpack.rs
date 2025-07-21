@@ -135,8 +135,7 @@ impl<'a> PackStreamDecoder<'a> {
             _ => {
                 // raise ValueError("Unknown PackStream marker %02X" % marker)
                 return Err(PyErr::new::<PyValueError, _>(format!(
-                    "Unknown PackStream marker {:02X}",
-                    marker
+                    "Unknown PackStream marker {marker:02X}",
                 )));
             }
         })
@@ -243,8 +242,7 @@ impl<'a> PackStreamDecoder<'a> {
             STRING_16 => self.read_u16(),
             STRING_32 => self.read_u32(),
             _ => Err(PyErr::new::<PyValueError, _>(format!(
-                "Invalid string length marker: {}",
-                marker
+                "Invalid string length marker: {marker}",
             ))),
         }
     }

@@ -26,7 +26,7 @@ authors = [
     {name = "Neo4j, Inc.", email = "drivers@neo4j.com"},
 ]
 dependencies = [
-    "neo4j == 5.28.1"
+    "neo4j == 6.0.0a1"
 ]
 requires-python = ">=3.10"
 keywords = ["neo4j", "graph", "database"]
@@ -42,7 +42,7 @@ classifiers = [
     "Topic :: Database",
     "Topic :: Software Development",
 ]
-version = "5.28.1.0"
+version = "6.0.0.0a1"
 
 [project.urls]
 Homepage = "https://neo4j.com/"
@@ -58,7 +58,7 @@ pandas = ["neo4j[pandas]"]
 pyarrow = ["neo4j[pyarrow]"]
 
 [build-system]
-requires = ["maturin ~= 1.9.0"]
+requires = ["maturin ~= 1.9.1"]
 build-backend = "maturin"
 
 [tool.maturin]
@@ -80,7 +80,7 @@ exclude = [
 
 [tool.towncrier]
 directory = "changelog.d"
-version = "5.28.1.0"
+version = "6.0.0.0a1"
 filename = "CHANGELOG.md"
 title_format = "## [{version}](https://github.com/neo4j/neo4j-python-driver-rust-ext/tree/{version}) ({project_date})\n***"
 issue_format = "[#{issue}]: https://github.com/neo4j/neo4j-python-driver-rust-ext/pull/{issue}"
