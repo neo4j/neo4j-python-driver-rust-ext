@@ -29,8 +29,7 @@ pub(super) fn swap_endian<'py>(
         Ok(type_size @ 2) | Ok(type_size @ 4) | Ok(type_size @ 8) => type_size,
         _ => {
             return Err(PyErr::new::<PyValueError, _>(format!(
-                "Unsupported type size {}",
-                type_size
+                "Unsupported type size {type_size}",
             )))
         }
     };
