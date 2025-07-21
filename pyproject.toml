@@ -16,7 +16,7 @@
 [project]
 name = "neo4j-rust-ext"
 description = "Rust Extensions for a Faster Neo4j Bolt Driver for Python"
-license = "Apache-2.0"
+license = "Apache-2.0 AND MIT"
 license-files = [
     "LICENSE*.txt",
     "NOTICE*.txt",
@@ -84,8 +84,9 @@ test = [
     "pytest-benchmark >= 5.1.0",
 ]
 packaging = [
-    "maturin ~= 1.9.0",
     "build",
+    "maturin ~= 1.9.0",
+    "towncrier >= 24.8.0",
 ]
 
 # single dependencies and other include-groups (not really meant to be installed as a group, but to avoid duplication)
@@ -109,6 +110,51 @@ exclude = [
     "tox.ini",
     { path = "neo4j/**/.keep", format = "wheel" }
 ]
+
+[tool.towncrier]
+directory = "changelog.d"
+version = "5.28.1.0"
+filename = "CHANGELOG.md"
+title_format = "## [{version}](https://github.com/neo4j/neo4j-python-driver-rust-ext/tree/{version}) ({project_date})\n***"
+issue_format = "[#{issue}]: https://github.com/neo4j/neo4j-python-driver-rust-ext/pull/{issue}"
+template = "changelog.d/template.md"
+
+[[tool.towncrier.type]]
+directory = "feature"
+name = "⭐️ New Features"
+showcontent = true
+[[tool.towncrier.type]]
+directory = "preview"
+name = "🔮️ New Preview Features"
+showcontent = true
+[[tool.towncrier.type]]
+directory = "fix"
+name = "🔧️ Fixes"
+showcontent = true
+[[tool.towncrier.type]]
+directory = "improve"
+name = "👏️ Improvements"
+showcontent = true
+[[tool.towncrier.type]]
+directory = "doc"
+name = "📚️ Docs"
+showcontent = true
+[[tool.towncrier.type]]
+directory = "mature"
+name = "🌳️ Maturing"
+showcontent = true
+[[tool.towncrier.type]]
+directory = "clean"
+name = "🧹️ Clean-up"
+showcontent = true
+[[tool.towncrier.type]]
+directory = "pkg"
+name = "📦️ Packaging"
+showcontent = true
+[[tool.towncrier.type]]
+directory = "dev"
+name = "🧑️‍💻️ Development"
+showcontent = true
 
 [tool.isort]
 combine_as_imports = true

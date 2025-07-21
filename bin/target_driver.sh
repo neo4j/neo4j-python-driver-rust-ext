@@ -12,3 +12,6 @@ git checkout "$version"
 git pull origin "$version"
 cd ..
 cp driver/tests/unit/common/codec/packstream/v1/test_packstream.py tests/v1/from_driver/test_packstream.py
+
+towncrier create -c "Target driver version ${version}<ISSUES_LIST>." "+.feature"
+echo "=== Please rename the changelog file to match the PR number. ==="
