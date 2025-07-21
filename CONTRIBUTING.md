@@ -54,7 +54,7 @@ Remember that many community members have become regular contributors and some a
 ## Specifically for this project:
 
 ### Setting up the Development Environment
- * Install Python 3.8+
+ * Install Python 3.10+
  * Install the requirements
    ```bash
    $ python3 -m pip install -U pip
@@ -94,6 +94,10 @@ python -m tox -e py312-test -- --benchmark-only --benchmark-autosave
 # or to compare the results with the previous run
 python -m tox -e py312-test -- --benchmark-only --benchmark-autosave --benchmark-compare
 ```
+
+### Changelog Entry
+This project uses [towncrier](https://towncrier.readthedocs.io/en/stable) to manage the changelog.
+See [changelog.d/README.md](changelog.d/README.md) for more information on how to add entries to the changelog.
 
 
 ## Got an idea for a new project?

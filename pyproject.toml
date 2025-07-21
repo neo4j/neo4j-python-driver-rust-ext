@@ -16,7 +16,11 @@
 [project]
 name = "neo4j-rust-ext"
 description = "Rust Extensions for a Faster Neo4j Bolt Driver for Python"
-license = {text = "Apache License, Version 2.0"}
+license = "Apache-2.0 AND MIT"
+license-files = [
+    "LICENSE*.txt",
+    "NOTICE*.txt",
+]
 readme = "README.md"
 authors = [
     {name = "Neo4j, Inc.", email = "drivers@neo4j.com"},
@@ -24,16 +28,12 @@ authors = [
 dependencies = [
     "neo4j == 5.28.1"
 ]
-requires-python = ">=3.7"
+requires-python = ">=3.10"
 keywords = ["neo4j", "graph", "database"]
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Developers",
-    "License :: OSI Approved :: Apache Software License",
     "Operating System :: OS Independent",
-    "Programming Language :: Python :: 3.7",
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
@@ -58,7 +58,7 @@ pandas = ["neo4j[pandas]"]
 pyarrow = ["neo4j[pyarrow]"]
 
 [build-system]
-requires = ["maturin ~= 1.8.3"]
+requires = ["maturin ~= 1.9.0"]
 build-backend = "maturin"
 
 [tool.maturin]
@@ -77,6 +77,51 @@ exclude = [
     "tox.ini",
     { path = "neo4j/**/.keep", format = "wheel" }
 ]
+
+[tool.towncrier]
+directory = "changelog.d"
+version = "5.28.1.0"
+filename = "CHANGELOG.md"
+title_format = "## [{version}](https://github.com/neo4j/neo4j-python-driver-rust-ext/tree/{version}) ({project_date})\n***"
+issue_format = "[#{issue}]: https://github.com/neo4j/neo4j-python-driver-rust-ext/pull/{issue}"
+template = "changelog.d/template.md"
+
+[[tool.towncrier.type]]
+directory = "feature"
+name = "⭐️ New Features"
+showcontent = true
+[[tool.towncrier.type]]
+directory = "preview"
+name = "🔮️ New Preview Features"
+showcontent = true
+[[tool.towncrier.type]]
+directory = "fix"
+name = "🔧️ Fixes"
+showcontent = true
+[[tool.towncrier.type]]
+directory = "improve"
+name = "👏️ Improvements"
+showcontent = true
+[[tool.towncrier.type]]
+directory = "doc"
+name = "📚️ Docs"
+showcontent = true
+[[tool.towncrier.type]]
+directory = "mature"
+name = "🌳️ Maturing"
+showcontent = true
+[[tool.towncrier.type]]
+directory = "clean"
+name = "🧹️ Clean-up"
+showcontent = true
+[[tool.towncrier.type]]
+directory = "pkg"
+name = "📦️ Packaging"
+showcontent = true
+[[tool.towncrier.type]]
+directory = "dev"
+name = "🧑️‍💻️ Development"
+showcontent = true
 
 [tool.isort]
 combine_as_imports = true
@@ -107,8 +152,7 @@ extend-exclude = [
 preview = true  # to get CPY lints
 extend-ignore = [
     "RUF002",  # allow ’ (RIGHT SINGLE QUOTATION MARK) to be used as an apostrophe (e.g. "it’s")
-    "SIM117",  # TODO: when Python 3.10+ is the minimum,
-               #       we can start to use multi-item `with` statements
+
     # pydocstyle
     "D1",   # disable check for undocumented items (way too noisy)
     "D203", # `one-blank-line-before-class`
@@ -207,9 +251,6 @@ select = [
     "RSE",
     # check return statements
     "RET",
-    # TODO: 6.0 - enable and add __slots__ to applicable classes
-    # # check __slots__ usage
-    # "SLOT",
     # check type-checking usage
     "TCH",
     # copyright notice
