@@ -19,13 +19,13 @@ from collections import defaultdict
 import pytest
 
 
-@pytest.mark.hookwrapper
+@pytest.hookimpl(wrapper=True)
 def pytest_benchmark_group_stats(config, benchmarks, group_by):
     outcome = yield
 
     if group_by != "group":
         # not default grouping, so let the user have what they asked for
-        return
+        return outcome
 
     result = defaultdict(list)
     for bench in benchmarks:
@@ -49,4 +49,4 @@ def pytest_benchmark_group_stats(config, benchmarks, group_by):
         group_name = f"{base_name}[{name_params}]"
         result[group_name].append(bench)
 
-    outcome.force_result(result.items())
+    return result.items()
