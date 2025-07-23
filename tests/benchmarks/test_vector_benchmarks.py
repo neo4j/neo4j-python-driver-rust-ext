@@ -38,17 +38,17 @@ def test_bench_swap_endian(benchmark, mocker, ext, type_size, length):
 
 @pytest.mark.parametrize("ext", ("numpy", "rust", "python"))
 @pytest.mark.parametrize("dtype", ("i8", "i16", "i32", "i64", "f32", "f64"))
-@pytest.mark.parametrize("as_iter", (True, False))
+@pytest.mark.parametrize("as_gen", (True, False))
 @pytest.mark.parametrize("length", (1, 1_000))
-def test_bench_from_native(benchmark, mocker, ext, dtype, as_iter, length):
+def test_bench_from_native(benchmark, mocker, ext, dtype, as_gen, length):
     raw_data = bytes(i % 256 for i in range(8 * length))
     data = Vector.from_bytes(raw_data, dtype).to_native()
     rounds = max(min(1_000_000 // length, 100_000), 100)
     _mock_mask_extensions(mocker, ext)
-    if as_iter:
+    if as_gen:
 
         def work():
-            Vector.from_native(iter(data), dtype)
+            Vector.from_native((x for x in data), dtype)
     else:
 
         def work():
