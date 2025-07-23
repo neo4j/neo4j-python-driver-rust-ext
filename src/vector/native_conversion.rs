@@ -29,7 +29,7 @@ pub(super) fn vec_f64_from_native<'py>(data: Bound<'py, PyAny>) -> PyResult<Boun
     let mut bytes = Vec::with_capacity(data_iter.size_hint().0.saturating_mul(size_of::<f64>()));
     for value in data_iter {
         let value = vec_value_as_f64(value?)?;
-        bytes.extend(&f64::to_be_bytes(value as _));
+        bytes.extend(&f64::to_be_bytes(value));
     }
     Ok(PyBytes::new(py, &bytes))
 }
@@ -78,7 +78,7 @@ pub(super) fn vec_f32_from_native<'py>(data: Bound<'py, PyAny>) -> PyResult<Boun
     let mut bytes = Vec::with_capacity(data_iter.size_hint().0.saturating_mul(size_of::<f32>()));
     for value in data_iter {
         let value = vec_value_as_f32(value?)?;
-        bytes.extend(&f32::to_be_bytes(value as _));
+        bytes.extend(&f32::to_be_bytes(value));
     }
     Ok(PyBytes::new(py, &bytes))
 }
@@ -127,7 +127,7 @@ pub(super) fn vec_i64_from_native<'py>(data: Bound<'py, PyAny>) -> PyResult<Boun
     let mut bytes = Vec::with_capacity(data_iter.size_hint().0.saturating_mul(size_of::<i64>()));
     for value in data_iter {
         let value = vec_value_as_i64(value?)?;
-        bytes.extend(&i64::to_be_bytes(value as _));
+        bytes.extend(&i64::to_be_bytes(value));
     }
     Ok(PyBytes::new(py, &bytes))
 }
@@ -181,7 +181,7 @@ pub(super) fn vec_i32_from_native<'py>(data: Bound<'py, PyAny>) -> PyResult<Boun
     let mut bytes = Vec::with_capacity(data_iter.size_hint().0.saturating_mul(size_of::<i32>()));
     for value in data_iter {
         let value = vec_value_as_i32(value?)?;
-        bytes.extend(&i32::to_be_bytes(value as _));
+        bytes.extend(&i32::to_be_bytes(value));
     }
     Ok(PyBytes::new(py, &bytes))
 }
@@ -235,7 +235,7 @@ pub(super) fn vec_i16_from_native<'py>(data: Bound<'py, PyAny>) -> PyResult<Boun
     let mut bytes = Vec::with_capacity(data_iter.size_hint().0.saturating_mul(size_of::<i16>()));
     for value in data_iter {
         let value = vec_value_as_i16(value?)?;
-        bytes.extend(&i16::to_be_bytes(value as _));
+        bytes.extend(&i16::to_be_bytes(value));
     }
     Ok(PyBytes::new(py, &bytes))
 }
@@ -289,7 +289,7 @@ pub(super) fn vec_i8_from_native<'py>(data: Bound<'py, PyAny>) -> PyResult<Bound
     let mut bytes = Vec::with_capacity(data_iter.size_hint().0.saturating_mul(size_of::<i8>()));
     for value in data_iter {
         let value = vec_value_as_i8(value?)?;
-        bytes.extend(&i8::to_be_bytes(value as _));
+        bytes.extend(&i8::to_be_bytes(value));
     }
     Ok(PyBytes::new(py, &bytes))
 }
