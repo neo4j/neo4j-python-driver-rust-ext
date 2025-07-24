@@ -90,9 +90,9 @@ Go into `tests/benchmarks/test_benchmarks.py` and adjust the connection details 
 This implies you're having a running database.
 Then run the benchmarks with:
 ```bash
-python -m tox -e py312-test -- --benchmark-only --benchmark-autosave --benchmark-group-by=fullname
+python -m tox -e py312-test -- --benchmark-only --benchmark-autosave
 # or to compare the results with the previous run
-python -m tox -e py312-test -- --benchmark-only --benchmark-autosave --benchmark-group-by=fullname --benchmark-compare
+python -m tox -e py312-test -- --benchmark-only --benchmark-autosave --benchmark-compare
 ```
 
 ### Changelog Entry

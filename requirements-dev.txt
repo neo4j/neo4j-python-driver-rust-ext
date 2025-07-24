@@ -8,6 +8,7 @@ isort>=6.0.1
 tox>=4.25.0
 pytest>=8.3.5
 pytest-benchmark>=5.1.0
+pytest-mock>=3.14.1
 
 # for Python driver's TestKit backend
 freezegun>=1.5.1
