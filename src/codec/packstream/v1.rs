@@ -19,6 +19,8 @@ mod unpack;
 use pyo3::prelude::*;
 use pyo3::wrap_pyfunction;
 
+use crate::register_package;
+
 const TINY_STRING: u8 = 0x80;
 const TINY_LIST: u8 = 0x90;
 const TINY_MAP: u8 = 0xA0;
@@ -44,7 +46,10 @@ const BYTES_8: u8 = 0xCC;
 const BYTES_16: u8 = 0xCD;
 const BYTES_32: u8 = 0xCE;
 
-pub(crate) fn register(m: &Bound<PyModule>) -> PyResult<()> {
+pub(crate) fn init_module(m: &Bound<PyModule>, name: &str) -> PyResult<()> {
+    m.gil_used(false)?;
+    register_package(m, name)?;
+
     m.add_function(wrap_pyfunction!(unpack::unpack, m)?)?;
     m.add_function(wrap_pyfunction!(pack::pack, m)?)?;
 

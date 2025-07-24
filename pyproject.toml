@@ -82,6 +82,7 @@ precommit = [
 test = [
     "pytest >= 8.3.5",
     "pytest-benchmark >= 5.1.0",
+    "pytest-mock >= 3.14.1",
 ]
 packaging = [
     "build",
@@ -96,7 +97,7 @@ dep-project-dependencies = [
 
 [tool.maturin]
 features = ["pyo3/extension-module", "pyo3/generate-import-lib"]
-module-name = "neo4j._codec.packstream._rust"
+module-name = "neo4j._rust"
 exclude = [
     "/.editorconfig",
     ".gitignore",

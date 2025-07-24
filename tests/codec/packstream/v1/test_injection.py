@@ -97,21 +97,24 @@ def test_unpack_injection_works(unpacker_with_buffer):
 
 
 @pytest.mark.parametrize(
-    ("name", "package_names"),
+    ("name", "submodule_names"),
     (
-        ("neo4j._codec.packstream._rust.v1", ()),
-        ("neo4j._codec.packstream._rust", ("v1",)),
-        ("neo4j._codec.packstream", ("_rust",)),
+        # packstream v1
+        ("neo4j._rust.codec.packstream.v1", ()),
+        ("neo4j._rust.codec.packstream", ("v1",)),
+        ("neo4j._rust.codec", ("packstream",)),
+        ("neo4j._rust", ("codec",)),
+        ("neo4j", ("_rust",)),
     ),
 )
-def test_import_module(name, package_names):
+def test_import_module(name, submodule_names):
     module = importlib.import_module(name)
 
     assert module.__name__ == name
 
-    for package_name in package_names:
-        package = getattr(module, package_name)
-        assert package.__name__ == f"{name}.{package_name}"
+    for submodule_name in submodule_names:
+        package = getattr(module, submodule_name)
+        assert package.__name__ == f"{name}.{submodule_name}"
 
 
 def test_rust_struct_access():

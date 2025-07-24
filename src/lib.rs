@@ -13,26 +13,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-pub mod v1;
+mod codec;
+mod vector;
 
-use pyo3::basic::CompareOp;
-use pyo3::exceptions::PyValueError;
 use pyo3::prelude::*;
-use pyo3::types::{PyBytes, PyTuple};
-use pyo3::IntoPyObjectExt;
 
 #[pymodule(gil_used = false)]
 #[pyo3(name = "_rust")]
-fn packstream(m: &Bound<PyModule>) -> PyResult<()> {
+fn init_module(m: &Bound<PyModule>) -> PyResult<()> {
     let py = m.py();
 
-    m.add_class::<Structure>()?;
+    let mod_codec = PyModule::new(py, "codec")?;
+    m.add_submodule(&mod_codec)?;
+    codec::init_module(&mod_codec, "codec")?;
 
-    let mod_v1 = PyModule::new(py, "v1")?;
-    mod_v1.gil_used(false)?;
-    v1::register(&mod_v1)?;
-    m.add_submodule(&mod_v1)?;
-    register_package(&mod_v1, "v1")?;
+    let mod_vector = PyModule::new(py, "vector")?;
+    m.add_submodule(&mod_vector)?;
+    vector::init_module(&mod_vector, "vector")?;
 
     Ok(())
 }
@@ -41,7 +38,7 @@ fn packstream(m: &Bound<PyModule>) -> PyResult<()> {
 // https://github.com/PyO3/pyo3/issues/1517#issuecomment-808664021
 fn register_package(m: &Bound<PyModule>, name: &str) -> PyResult<()> {
     let py = m.py();
-    let module_name = format!("neo4j._codec.packstream._rust.{name}").into_pyobject(py)?;
+    let module_name = format!("neo4j._rust.{name}").into_pyobject(py)?;
 
     py.import("sys")?
         .getattr("modules")?
@@ -49,69 +46,4 @@ fn register_package(m: &Bound<PyModule>, name: &str) -> PyResult<()> {
     m.setattr("__name__", &module_name)?;
 
     Ok(())
-}
-
-#[pyclass]
-#[derive(Debug)]
-pub struct Structure {
-    tag: u8,
-    #[pyo3(get)]
-    fields: Vec<PyObject>,
-}
-
-#[pymethods]
-impl Structure {
-    #[new]
-    #[pyo3(signature = (tag, *fields))]
-    #[pyo3(text_signature = "(tag, *fields)")]
-    fn new(tag: &[u8], fields: Vec<PyObject>) -> PyResult<Self> {
-        if tag.len() != 1 {
-            return Err(PyErr::new::<PyValueError, _>("tag must be a single byte"));
-        }
-        let tag = tag[0];
-        Ok(Self { tag, fields })
-    }
-
-    #[getter(tag)]
-    fn read_tag<'py>(&self, py: Python<'py>) -> Bound<'py, PyBytes> {
-        PyBytes::new(py, &[self.tag])
-    }
-
-    #[getter(fields)]
-    fn read_fields<'py>(&self, py: Python<'py>) -> PyResult<Bound<'py, PyTuple>> {
-        PyTuple::new(py, &self.fields)
-    }
-
-    fn eq(&self, other: &Self, py: Python<'_>) -> PyResult<bool> {
-        if self.tag != other.tag || self.fields.len() != other.fields.len() {
-            return Ok(false);
-        }
-        for (a, b) in self
-            .fields
-            .iter()
-            .map(|e| e.bind(py))
-            .zip(other.fields.iter().map(|e| e.bind(py)))
-        {
-            if !a.eq(b)? {
-                return Ok(false);
-            }
-        }
-        Ok(true)
-    }
-
-    fn __richcmp__(&self, other: &Self, op: CompareOp, py: Python<'_>) -> PyResult<PyObject> {
-        Ok(match op {
-            CompareOp::Eq => self.eq(other, py)?.into_py_any(py)?,
-            CompareOp::Ne => (!self.eq(other, py)?).into_py_any(py)?,
-            _ => py.NotImplemented(),
-        })
-    }
-
-    fn __hash__(&self, py: Python<'_>) -> PyResult<isize> {
-        let mut fields_hash = 0;
-        for field in &self.fields {
-            fields_hash += field.bind(py).hash()?;
-        }
-        Ok(fields_hash.wrapping_add(self.tag.into()))
-    }
 }
