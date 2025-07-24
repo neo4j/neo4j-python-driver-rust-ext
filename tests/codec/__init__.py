@@ -12,24 +12,3 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
-
-from _common import run_python
-
-
-if __name__ == "__main__":
-    run_python(["-m", "pip", "install", "-U", "pip"])
-    run_python(["-m", "pip", "install", "-U", "--group", "packaging"])
-    run_python(["-m", "build", "."])
-    run_python(
-        [
-            "-m",
-            "pip",
-            "install",
-            "-U",
-            "--group",
-            "driver/pyproject.toml:testkit",
-            "-e",
-            ".",
-        ]
-    )

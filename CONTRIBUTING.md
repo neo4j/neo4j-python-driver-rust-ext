@@ -55,10 +55,15 @@ Remember that many community members have become regular contributors and some a
 
 ### Setting up the Development Environment
  * Install Python 3.10+
- * Install the requirements
+ * Install the requirements (needs pip 25.1+)
    ```bash
-   $ python3 -m pip install -U pip
-   $ python3 -m pip install -Ur requirements-dev.txt
+   # recommended to use a virtual environment
+   $ python3 -m venv .venv
+   $ source .venv/bin/activate
+   # make sure pip is up to date
+   $ pip install -U pip
+   # install all development dependencies and driver
+   $ pip install -U --group dev -e .
    ```
 * Install pre-commit hooks to notice mistakes before the CI does it for you ;)
   ```bash
@@ -90,9 +95,9 @@ Go into `tests/benchmarks/test_benchmarks.py` and adjust the connection details 
 This implies you're having a running database.
 Then run the benchmarks with:
 ```bash
-python -m tox -e py312-test -- --benchmark-only --benchmark-autosave --benchmark-group-by=fullname
+python -m tox -e py312-test -- --benchmark-only --benchmark-autosave
 # or to compare the results with the previous run
-python -m tox -e py312-test -- --benchmark-only --benchmark-autosave --benchmark-group-by=fullname --benchmark-compare
+python -m tox -e py312-test -- --benchmark-only --benchmark-autosave --benchmark-compare
 ```
 
 ### Changelog Entry
