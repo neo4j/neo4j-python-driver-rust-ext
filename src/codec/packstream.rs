@@ -19,7 +19,7 @@ use pyo3::basic::CompareOp;
 use pyo3::exceptions::PyValueError;
 use pyo3::prelude::*;
 use pyo3::types::{PyBytes, PyTuple};
-use pyo3::IntoPyObjectExt;
+use pyo3::{IntoPyObjectExt, PyTraverseError, PyVisit};
 
 use crate::register_package;
 
@@ -100,5 +100,16 @@ impl Structure {
             fields_hash += field.bind(py).hash()?;
         }
         Ok(fields_hash.wrapping_add(self.tag.into()))
+    }
+
+    fn __traverse__(&self, visit: PyVisit<'_>) -> Result<(), PyTraverseError> {
+        for field in &self.fields {
+            visit.call(field)?;
+        }
+        Ok(())
+    }
+
+    fn __clear__(&mut self) {
+        self.fields.clear();
     }
 }
