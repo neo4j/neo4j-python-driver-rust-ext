@@ -61,6 +61,40 @@ pyarrow = ["neo4j[pyarrow]"]
 requires = ["maturin ~= 1.9.1"]
 build-backend = "maturin"
 
+[dependency-groups]
+# To install all development dependencies as well as the driver with all optional dependencies,
+# run `pip install --group dev -e .` inside repository root folder.
+dev = [
+    # dev tools
+    {include-group = "dep-project-dependencies"},
+    {include-group = "tox"},
+    {include-group = "precommit"},
+    {include-group = "test"},
+    {include-group = "packaging"},
+]
+tox = [
+    "tox >= 4.25.0",
+]
+precommit = [
+    "pre-commit >= 4.2.0",
+    "isort >= 6.0.1",
+]
+test = [
+    "pytest >= 8.3.5",
+    "pytest-benchmark >= 5.1.0",
+    "pytest-mock >= 3.14.1",
+]
+packaging = [
+    "build",
+    "maturin ~= 1.9.1",
+    "towncrier >= 24.8.0",
+]
+
+# single dependencies and other include-groups (not really meant to be installed as a group, but to avoid duplication)
+dep-project-dependencies = [
+    "neo4j[numpy,pandas,pyarrow] == 5.28.1",
+]
+
 [tool.maturin]
 features = ["pyo3/extension-module", "pyo3/generate-import-lib"]
 module-name = "neo4j._rust"
