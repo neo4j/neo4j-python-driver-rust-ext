@@ -5,6 +5,60 @@ Changelog
 
 <!-- towncrier release notes start -->
 
+## [6.0.0.0a1](https://github.com/neo4j/neo4j-python-driver-rust-ext/tree/6.0.0.0a1) (2025-07-29)
+***
+### **⭐️ New Features**
+* Add extension for the `Vector` type ([#45]).
+  * Speed up endian conversion (byte flipping).
+  * Speed up conversion from and to native python types.
+* Target driver version 6.0.0a1 ([#47]).
+
+[#45]: https://github.com/neo4j/neo4j-python-driver-rust-ext/pull/45
+[#47]: https://github.com/neo4j/neo4j-python-driver-rust-ext/pull/47
+
+### **👏️ Improvements**
+* Update dependencies ([#32]):  
+  * ⚠️ Bump minimum supported Rust version (MSRV) from `1.67` to `1.77`.
+  * Security fix by bumping PyO3 (Rust binding for Python) from `0.22.4` to `0.24.2`.
+  * Update `maturin` (Python package builder) from `~= 1.6.0` to `~= 1.8.3`.
+* Harden `Structure` class against memory leak ([#50]).  
+  The extensions' implementation of packstream `Structure` could leak memory when being part of a reference cycle.
+  In reality this doesn't matter because the driver never constructs cyclic `Structure`s.
+  Every packstream value is a tree in terms of references (both directions: packing and unpacking).  
+  This change is meant to harden the extensions against introducing effective memory leaks in the driver should the driver's usage of `Structure` change in the future.
+* Optimize packing of `bytearray` ([#51]).
+  By special-casing `bytearray`, we can avoid an allocation and complete extra copy of the data when packing it.
+  This speeds up packing of `bytearray`s by roughly 1/3.
+
+[#32]: https://github.com/neo4j/neo4j-python-driver-rust-ext/pull/32
+[#50]: https://github.com/neo4j/neo4j-python-driver-rust-ext/pull/50
+[#51]: https://github.com/neo4j/neo4j-python-driver-rust-ext/pull/51
+
+### **🧹️ Clean-up**
+* ⚠️ Drop support for Python 3.7, 3.8, and 3.9 ([#37]).
+
+[#37]: https://github.com/neo4j/neo4j-python-driver-rust-ext/pull/37
+
+### **📦️ Packaging**
+* Update licensing meta data to be PEP 639 compliant ([#38]).
+  * Update `maturin` (Python package builder) from `~= 1.8.3` to `~= 1.9.0`.
+* ⚠️ Change licensing from "Apache-2.0" to "Apache-2.0 AND MIT"  ([#40]).
+* Update dependencies ([#46]).
+  * `PyO3`: `0.24.2` -> `0.25.1`
+  * `maturin`: `1.9.0` -> `1.9.1`
+
+[#38]: https://github.com/neo4j/neo4j-python-driver-rust-ext/pull/38
+[#40]: https://github.com/neo4j/neo4j-python-driver-rust-ext/pull/40
+[#46]: https://github.com/neo4j/neo4j-python-driver-rust-ext/pull/46
+
+### **🧑️‍💻️ Development**
+* Introduce [towncrier](https://towncrier.readthedocs.io/) for managing changelog entries ([#40]).
+* Use dependency groups in `pyproject.toml` for development dependencies ([#44]).
+
+[#40]: https://github.com/neo4j/neo4j-python-driver-rust-ext/pull/40
+[#44]: https://github.com/neo4j/neo4j-python-driver-rust-ext/pull/44
+
+
 ## [5.28.1.0](https://github.com/neo4j/neo4j-python-driver-rust-ext/tree/5.28.1.0) (2025-02-10)
 ***
 * Target driver version 5.28.1
