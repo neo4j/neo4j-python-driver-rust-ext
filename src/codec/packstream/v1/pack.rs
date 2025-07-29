@@ -14,12 +14,12 @@
 // limitations under the License.
 
 use std::borrow::Cow;
-use std::sync::atomic::{AtomicBool, Ordering};
+use std::sync::OnceLock;
 
-use pyo3::exceptions::{PyImportError, PyOverflowError, PyTypeError, PyValueError};
+use pyo3::exceptions::{PyOverflowError, PyTypeError, PyValueError};
 use pyo3::prelude::*;
 use pyo3::sync::with_critical_section;
-use pyo3::sync::GILOnceCell;
+use pyo3::sync::OnceLockExt;
 use pyo3::types::{PyByteArray, PyBytes, PyDict, PyString, PyTuple, PyType};
 use pyo3::{intern, IntoPyObjectExt};
 
@@ -130,29 +130,19 @@ impl TypeMappings {
     }
 }
 
-static TYPE_MAPPINGS: GILOnceCell<PyResult<TypeMappings>> = GILOnceCell::new();
-static TYPE_MAPPINGS_INIT: AtomicBool = AtomicBool::new(false);
+static TYPE_MAPPINGS: OnceLock<PyResult<TypeMappings>> = OnceLock::new();
 
 fn get_type_mappings(py: Python<'_>) -> PyResult<&'static TypeMappings> {
-    let mappings = TYPE_MAPPINGS.get_or_try_init(py, || {
-        fn init(py: Python<'_>) -> PyResult<TypeMappings> {
-            let locals = PyDict::new(py);
-            py.run(
-                c"from neo4j._codec.packstream.v1.types import *",
-                None,
-                Some(&locals),
-            )?;
-            TypeMappings::new(&locals)
-        }
-
-        if TYPE_MAPPINGS_INIT.swap(true, Ordering::SeqCst) {
-            return Err(PyErr::new::<PyImportError, _>(
-                "Cannot call _rust.pack while loading `neo4j._codec.packstream.v1.types`",
-            ));
-        }
-        Ok(init(py))
+    let mappings = TYPE_MAPPINGS.get_or_init_py_attached(py, || {
+        let locals = PyDict::new(py);
+        py.run(
+            c"from neo4j._codec.packstream.v1.types import *",
+            None,
+            Some(&locals),
+        )?;
+        TypeMappings::new(&locals)
     });
-    mappings?.as_ref().map_err(|e| e.clone_ref(py))
+    mappings.as_ref().map_err(|e| e.clone_ref(py))
 }
 
 #[pyfunction]
