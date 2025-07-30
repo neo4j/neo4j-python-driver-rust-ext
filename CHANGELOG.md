@@ -81,12 +81,14 @@ Changelog
 [#53]: https://github.com/neo4j/neo4j-python-driver-rust-ext/pull/53
 
 ### **📦️ Packaging**
+* ⚠️ Change licensing from "Apache-2.0" to "Apache-2.0 AND MIT"  ([#43]).
 * Update licensing meta data to be PEP 639 compliant ([#41]).
   * Update `maturin` (Python package builder) from `~= 1.8.3` to `~= 1.9.0`.
-* ⚠️ Change licensing from "Apache-2.0" to "Apache-2.0 AND MIT"  ([#43]).
+* Update `maturin` (Python package builder) from `~= 1.9.0` to `~= 1.9.1` ([#54]).
 
 [#41]: https://github.com/neo4j/neo4j-python-driver-rust-ext/pull/41
 [#43]: https://github.com/neo4j/neo4j-python-driver-rust-ext/pull/43
+[#54]: https://github.com/neo4j/neo4j-python-driver-rust-ext/pull/54
 
 ### **🧑️‍💻️ Development**
 * Introduce [towncrier](https://towncrier.readthedocs.io/) for managing changelog entries ([#43]).
