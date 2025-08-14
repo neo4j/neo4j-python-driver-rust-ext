@@ -236,8 +236,8 @@ impl<'a> PackStreamDecoder<'a> {
     fn read_string_length(&mut self) -> PyResult<usize> {
         let marker = self.read_byte()?;
         let high_nibble = marker & 0xF0;
-        match high_nibble {
-            TINY_STRING => Ok((marker & 0x0F) as usize),
+        match marker {
+            _ if high_nibble == TINY_STRING => Ok((marker & 0x0F).into()),
             STRING_8 => self.read_u8(),
             STRING_16 => self.read_u16(),
             STRING_32 => self.read_u32(),
