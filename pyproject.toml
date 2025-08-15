@@ -45,7 +45,7 @@ classifiers = [
     "Topic :: Database",
     "Topic :: Software Development",
 ]
-version = "5.28.2.0"
+version = "5.28.2.1"
 
 [project.urls]
 Homepage = "https://neo4j.com/"
@@ -83,7 +83,7 @@ exclude = [
 
 [tool.towncrier]
 directory = "changelog.d"
-version = "5.28.2.0"
+version = "5.28.2.1"
 filename = "CHANGELOG.md"
 title_format = "## [{version}](https://github.com/neo4j/neo4j-python-driver-rust-ext/tree/{version}) ({project_date})\n***"
 issue_format = "[#{issue}]: https://github.com/neo4j/neo4j-python-driver-rust-ext/pull/{issue}"

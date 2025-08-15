@@ -6,6 +6,14 @@ Changelog
 
 <!-- towncrier release notes start -->
 
+## [5.28.2.1](https://github.com/neo4j/neo4j-python-driver-rust-ext/tree/5.28.2.1) (2025-08-15)
+***
+### **🔧️ Fixes**
+* Fix decoding of map keys of certain sizes ([#59]).
+
+[#59]: https://github.com/neo4j/neo4j-python-driver-rust-ext/pull/59
+
+
 ## [5.28.2.0](https://github.com/neo4j/neo4j-python-driver-rust-ext/tree/5.28.2.0) (2025-07-30)
 ***
 ### **⭐️ New Features**
