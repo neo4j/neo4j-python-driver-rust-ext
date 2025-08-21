@@ -16,9 +16,9 @@
 mod v1;
 
 use pyo3::basic::CompareOp;
-use pyo3::exceptions::PyValueError;
+use pyo3::exceptions::{PyIndexError, PyValueError};
 use pyo3::prelude::*;
-use pyo3::types::{PyBytes, PyTuple};
+use pyo3::types::PyBytes;
 use pyo3::{IntoPyObjectExt, PyTraverseError, PyVisit};
 
 use crate::register_package;
@@ -46,6 +46,40 @@ pub struct Structure {
     fields: Vec<PyObject>,
 }
 
+impl Structure {
+    fn eq(&self, other: &Self, py: Python<'_>) -> PyResult<bool> {
+        if self.tag != other.tag || self.fields.len() != other.fields.len() {
+            return Ok(false);
+        }
+        for (a, b) in self
+            .fields
+            .iter()
+            .map(|e| e.bind(py))
+            .zip(other.fields.iter().map(|e| e.bind(py)))
+        {
+            if !a.eq(b)? {
+                return Ok(false);
+            }
+        }
+        Ok(true)
+    }
+
+    fn compute_index(&self, index: isize) -> PyResult<usize> {
+        Ok(if index < 0 {
+            self.fields
+                .len()
+                .checked_sub(-index as usize)
+                .ok_or_else(|| PyErr::new::<PyIndexError, _>("field index out of range"))?
+        } else {
+            let index = index as usize;
+            if index >= self.fields.len() {
+                return Err(PyErr::new::<PyIndexError, _>("field index out of range"));
+            }
+            index
+        })
+    }
+}
+
 #[pymethods]
 impl Structure {
     #[new]
@@ -64,26 +98,15 @@ impl Structure {
         PyBytes::new(py, &[self.tag])
     }
 
-    #[getter(fields)]
-    fn read_fields<'py>(&self, py: Python<'py>) -> PyResult<Bound<'py, PyTuple>> {
-        PyTuple::new(py, &self.fields)
-    }
-
-    fn eq(&self, other: &Self, py: Python<'_>) -> PyResult<bool> {
-        if self.tag != other.tag || self.fields.len() != other.fields.len() {
-            return Ok(false);
-        }
-        for (a, b) in self
-            .fields
-            .iter()
-            .map(|e| e.bind(py))
-            .zip(other.fields.iter().map(|e| e.bind(py)))
-        {
-            if !a.eq(b)? {
-                return Ok(false);
-            }
-        }
-        Ok(true)
+    fn __repr__(&self, py: Python<'_>) -> PyResult<String> {
+        let mut args = format!(r"b'{}'", self.tag as char);
+        self.fields.iter().try_for_each(|field| {
+            let repr = field.bind(py).repr()?;
+            args.push_str(", ");
+            args.push_str(&repr.to_cow()?);
+            Ok::<_, PyErr>(())
+        })?;
+        Ok(format!("Structure({args})"))
     }
 
     fn __richcmp__(&self, other: &Self, op: CompareOp, py: Python<'_>) -> PyResult<PyObject> {
@@ -94,12 +117,18 @@ impl Structure {
         })
     }
 
-    fn __hash__(&self, py: Python<'_>) -> PyResult<isize> {
-        let mut fields_hash = 0;
-        for field in &self.fields {
-            fields_hash += field.bind(py).hash()?;
-        }
-        Ok(fields_hash.wrapping_add(self.tag.into()))
+    fn __len__(&self) -> usize {
+        self.fields.len()
+    }
+
+    fn __getitem__(&self, index: isize, py: Python<'_>) -> PyResult<PyObject> {
+        Ok(self.fields[self.compute_index(index)?].clone_ref(py))
+    }
+
+    fn __setitem__(&mut self, index: isize, value: PyObject) -> PyResult<()> {
+        let index = self.compute_index(index)?;
+        self.fields[index] = value;
+        Ok(())
     }
 
     fn __traverse__(&self, visit: PyVisit<'_>) -> Result<(), PyTraverseError> {

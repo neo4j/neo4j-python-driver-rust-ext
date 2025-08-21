@@ -124,7 +124,7 @@ def test_rust_struct_access():
 
     assert struct.tag == tag
     assert isinstance(struct.tag, bytes)
-    assert struct.fields == tuple(fields)
+    assert struct.fields == fields
 
 
 def test_rust_struct_equal():
