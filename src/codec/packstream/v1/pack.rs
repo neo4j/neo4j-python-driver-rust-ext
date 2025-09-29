@@ -32,14 +32,14 @@ use super::{
 
 #[derive(Debug)]
 struct TypeMappings {
-    none_values: Vec<PyObject>,
-    true_values: Vec<PyObject>,
-    false_values: Vec<PyObject>,
-    int_types: PyObject,
-    float_types: PyObject,
-    sequence_types: PyObject,
-    mapping_types: PyObject,
-    bytes_types: PyObject,
+    none_values: Vec<Py<PyAny>>,
+    true_values: Vec<Py<PyAny>>,
+    false_values: Vec<Py<PyAny>>,
+    int_types: Py<PyAny>,
+    float_types: Py<PyAny>,
+    sequence_types: Py<PyAny>,
+    mapping_types: Py<PyAny>,
+    bytes_types: Py<PyAny>,
 }
 
 impl TypeMappings {
@@ -274,7 +274,7 @@ impl<'a> PackStreamEncoder<'a> {
     fn write_exact_value(
         &mut self,
         value: &Bound<PyAny>,
-        values: &[PyObject],
+        values: &[Py<PyAny>],
         bytes: &[u8],
     ) -> PyResult<bool> {
         for v in values {

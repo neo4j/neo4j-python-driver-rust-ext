@@ -43,7 +43,7 @@ pub(super) fn init_module(m: &Bound<PyModule>, name: &str) -> PyResult<()> {
 pub struct Structure {
     tag: u8,
     #[pyo3(get)]
-    fields: Vec<PyObject>,
+    fields: Vec<Py<PyAny>>,
 }
 
 impl Structure {
@@ -85,7 +85,7 @@ impl Structure {
     #[new]
     #[pyo3(signature = (tag, *fields))]
     #[pyo3(text_signature = "(tag, *fields)")]
-    fn new(tag: &[u8], fields: Vec<PyObject>) -> PyResult<Self> {
+    fn new(tag: &[u8], fields: Vec<Py<PyAny>>) -> PyResult<Self> {
         if tag.len() != 1 {
             return Err(PyErr::new::<PyValueError, _>("tag must be a single byte"));
         }
@@ -109,7 +109,7 @@ impl Structure {
         Ok(format!("Structure({args})"))
     }
 
-    fn __richcmp__(&self, other: &Self, op: CompareOp, py: Python<'_>) -> PyResult<PyObject> {
+    fn __richcmp__(&self, other: &Self, op: CompareOp, py: Python<'_>) -> PyResult<Py<PyAny>> {
         Ok(match op {
             CompareOp::Eq => self.eq(other, py)?.into_py_any(py)?,
             CompareOp::Ne => (!self.eq(other, py)?).into_py_any(py)?,
@@ -121,11 +121,11 @@ impl Structure {
         self.fields.len()
     }
 
-    fn __getitem__(&self, index: isize, py: Python<'_>) -> PyResult<PyObject> {
+    fn __getitem__(&self, index: isize, py: Python<'_>) -> PyResult<Py<PyAny>> {
         Ok(self.fields[self.compute_index(index)?].clone_ref(py))
     }
 
-    fn __setitem__(&mut self, index: isize, value: PyObject) -> PyResult<()> {
+    fn __setitem__(&mut self, index: isize, value: Py<PyAny>) -> PyResult<()> {
         let index = self.compute_index(index)?;
         self.fields[index] = value;
         Ok(())
