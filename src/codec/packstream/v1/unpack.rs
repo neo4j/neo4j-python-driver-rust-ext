@@ -32,7 +32,7 @@ pub(super) fn unpack(
     bytes: Bound<PyByteArray>,
     idx: usize,
     hydration_hooks: Option<Bound<PyDict>>,
-) -> PyResult<(PyObject, usize)> {
+) -> PyResult<(Py<PyAny>, usize)> {
     let py = bytes.py();
     let mut decoder = PackStreamDecoder::new(py, bytes, idx, hydration_hooks);
     let result = decoder.read()?;
@@ -61,12 +61,12 @@ impl<'a> PackStreamDecoder<'a> {
         }
     }
 
-    fn read(&mut self) -> PyResult<PyObject> {
+    fn read(&mut self) -> PyResult<Py<PyAny>> {
         let marker = self.read_byte()?;
         self.read_value(marker)
     }
 
-    fn read_value(&mut self, marker: u8) -> PyResult<PyObject> {
+    fn read_value(&mut self, marker: u8) -> PyResult<Py<PyAny>> {
         let high_nibble = marker & 0xF0;
 
         Ok(match marker {
@@ -141,7 +141,7 @@ impl<'a> PackStreamDecoder<'a> {
         })
     }
 
-    fn read_list(&mut self, length: usize) -> PyResult<PyObject> {
+    fn read_list(&mut self, length: usize) -> PyResult<Py<PyAny>> {
         if length == 0 {
             return Ok(PyList::empty(self.py).into_any().unbind());
         }
@@ -152,7 +152,7 @@ impl<'a> PackStreamDecoder<'a> {
         items.into_py_any(self.py)
     }
 
-    fn read_string(&mut self, length: usize) -> PyResult<PyObject> {
+    fn read_string(&mut self, length: usize) -> PyResult<Py<PyAny>> {
         if length == 0 {
             return "".into_py_any(self.py);
         }
@@ -174,11 +174,11 @@ impl<'a> PackStreamDecoder<'a> {
         data.into_py_any(self.py)
     }
 
-    fn read_map(&mut self, length: usize) -> PyResult<PyObject> {
+    fn read_map(&mut self, length: usize) -> PyResult<Py<PyAny>> {
         if length == 0 {
             return Ok(PyDict::new(self.py).into_any().unbind());
         }
-        let mut key_value_pairs: Vec<(PyObject, PyObject)> = Vec::with_capacity(length);
+        let mut key_value_pairs: Vec<(Py<PyAny>, Py<PyAny>)> = Vec::with_capacity(length);
         for _ in 0..length {
             let len = self.read_string_length()?;
             let key = self.read_string(len)?;
@@ -188,7 +188,7 @@ impl<'a> PackStreamDecoder<'a> {
         Ok(key_value_pairs.into_py_dict(self.py)?.into())
     }
 
-    fn read_bytes(&mut self, length: usize) -> PyResult<PyObject> {
+    fn read_bytes(&mut self, length: usize) -> PyResult<Py<PyAny>> {
         if length == 0 {
             return Ok(PyBytes::new(self.py, &[]).into_any().unbind());
         }
@@ -208,7 +208,7 @@ impl<'a> PackStreamDecoder<'a> {
         Ok(PyBytes::new(self.py, &data).into_any().unbind())
     }
 
-    fn read_struct(&mut self, length: usize) -> PyResult<PyObject> {
+    fn read_struct(&mut self, length: usize) -> PyResult<Py<PyAny>> {
         let tag = self.read_byte()?;
         let mut fields = Vec::with_capacity(length);
         for _ in 0..length {
