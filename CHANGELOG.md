@@ -5,6 +5,39 @@ Changelog
 
 <!-- towncrier release notes start -->
 
+## [6.0.0.0](https://github.com/neo4j/neo4j-python-driver-rust-ext/tree/6.0.0.0) (2025-09-30)
+***
+### **⭐️ New Features**
+* Target driver version 6.0.0 ([#67]).
+
+[#67]: https://github.com/neo4j/neo4j-python-driver-rust-ext/pull/67
+
+### **🔧️ Fixes**
+* Fix decoding of map keys of certain sizes ([#59]).
+
+[#59]: https://github.com/neo4j/neo4j-python-driver-rust-ext/pull/59
+
+### **👏️ Improvements**
+* Bump dependency PyO3 (Rust binding for Python) from `0.25.1` to `0.26.0` ([#66]).
+
+[#66]: https://github.com/neo4j/neo4j-python-driver-rust-ext/pull/66
+
+### **🧹️ Clean-up**
+* Improve packstream `Structure` class ([#63]).
+
+   * Implement `repr` to match Python implementation.
+   * Remove `__hash__` implementation to match Python implementation.
+   * Implement `__getitem__` and `__setitem__` to be on par with Python implementation.
+   * Copy tests for `Structure` from the driver project.
+
+[#63]: https://github.com/neo4j/neo4j-python-driver-rust-ext/pull/63
+
+### **🧑️‍💻️ Development**
+* Fix broken `cp` command in `bin/target_driver.sh` ([#67]).
+
+[#67]: https://github.com/neo4j/neo4j-python-driver-rust-ext/pull/67
+
+
 ## [6.0.0.0a1](https://github.com/neo4j/neo4j-python-driver-rust-ext/tree/6.0.0.0a1) (2025-07-29)
 ***
 ### **⭐️ New Features**
