@@ -24,11 +24,10 @@ Changelog
 
 ### **🧹️ Clean-up**
 * Improve packstream `Structure` class ([#63]).
-
-   * Implement `repr` to match Python implementation.
-   * Remove `__hash__` implementation to match Python implementation.
-   * Implement `__getitem__` and `__setitem__` to be on par with Python implementation.
-   * Copy tests for `Structure` from the driver project.
+  * Implement `repr` to match Python implementation.
+  * Remove `__hash__` implementation to match Python implementation.
+  * Implement `__getitem__` and `__setitem__` to be on par with Python implementation.
+  * Copy tests for `Structure` from the driver project.
 
 [#63]: https://github.com/neo4j/neo4j-python-driver-rust-ext/pull/63
 
