@@ -5,6 +5,14 @@ Changelog
 
 <!-- towncrier release notes start -->
 
+## [6.0.2.0](https://github.com/neo4j/neo4j-python-driver-rust-ext/tree/6.0.2.0) (2025-10-02)
+***
+### **⭐️ New Features**
+* Target driver version 6.0.2 ([#69]).
+
+[#69]: https://github.com/neo4j/neo4j-python-driver-rust-ext/pull/69
+
+
 ## [6.0.1.0](https://github.com/neo4j/neo4j-python-driver-rust-ext/tree/6.0.1.0) (2025-10-01)
 ***
 ### **⭐️ New Features**
