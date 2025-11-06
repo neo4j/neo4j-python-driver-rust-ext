@@ -60,7 +60,7 @@ impl TypeMappings {
                         let Ok(typ) = typ else {
                             return true;
                         };
-                        let Ok(typ) = typ.downcast::<PyType>() else {
+                        let Ok(typ) = typ.cast::<PyType>() else {
                             return true;
                         };
                         is_of_known_bytes_types(typ).map(|b| !b).unwrap_or(true)
@@ -203,9 +203,9 @@ impl<'a> PackStreamEncoder<'a> {
             return self.write_string(value.extract::<&str>()?);
         }
 
-        if let Ok(value) = value.downcast::<PyBytes>() {
+        if let Ok(value) = value.cast::<PyBytes>() {
             return self.write_bytes(value.as_bytes());
-        } else if let Ok(value) = value.downcast::<PyByteArray>() {
+        } else if let Ok(value) = value.cast::<PyByteArray>() {
             return with_critical_section(value, || {
                 // SAFETY:
                 //  * we're holding the GIL/are attached to the Python interpreter

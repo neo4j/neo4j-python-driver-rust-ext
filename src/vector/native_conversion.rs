@@ -43,7 +43,7 @@ fn vec_value_as_f64(value: Bound<PyAny>) -> PyResult<f64> {
     }
 
     value
-        .downcast::<PyFloat>()
+        .cast::<PyFloat>()
         .or_else(|_| make_error(&value))?
         .extract()
         .or_else(|_| make_error(&value))
@@ -92,7 +92,7 @@ fn vec_value_as_f32(value: Bound<PyAny>) -> PyResult<f32> {
     }
 
     value
-        .downcast::<PyFloat>()
+        .cast::<PyFloat>()
         .or_else(|_| make_error(&value))?
         .extract()
         .or_else(|_| make_error(&value))
@@ -142,7 +142,7 @@ fn vec_value_as_i64(value: Bound<PyAny>) -> PyResult<i64> {
 
     let py = value.py();
 
-    let value = value.downcast::<PyInt>().or_else(|_| make_error(&value))?;
+    let value = value.cast::<PyInt>().or_else(|_| make_error(&value))?;
     if value.lt(PyInt::new(py, i64::MIN))? || value.gt(PyInt::new(py, i64::MAX))? {
         return Err(PyErr::new::<PyOverflowError, _>(format!(
             "Value {} is out of range for i64: [-9223372036854775808, 9223372036854775807]",
@@ -196,7 +196,7 @@ fn vec_value_as_i32(value: Bound<PyAny>) -> PyResult<i32> {
 
     let py = value.py();
 
-    let value = value.downcast::<PyInt>().or_else(|_| make_error(&value))?;
+    let value = value.cast::<PyInt>().or_else(|_| make_error(&value))?;
     if value.lt(PyInt::new(py, i32::MIN))? || value.gt(PyInt::new(py, i32::MAX))? {
         return Err(PyErr::new::<PyOverflowError, _>(format!(
             "Value {} is out of range for i32: [-2147483648, 2147483647]",
@@ -250,7 +250,7 @@ fn vec_value_as_i16(value: Bound<PyAny>) -> PyResult<i16> {
 
     let py = value.py();
 
-    let value = value.downcast::<PyInt>().or_else(|_| make_error(&value))?;
+    let value = value.cast::<PyInt>().or_else(|_| make_error(&value))?;
     if value.lt(PyInt::new(py, i16::MIN))? || value.gt(PyInt::new(py, i16::MAX))? {
         return Err(PyErr::new::<PyOverflowError, _>(format!(
             "Value {} is out of range for i16: [-32768, 32767]",
@@ -304,7 +304,7 @@ fn vec_value_as_i8(value: Bound<PyAny>) -> PyResult<i8> {
 
     let py = value.py();
 
-    let value = value.downcast::<PyInt>().or_else(|_| make_error(&value))?;
+    let value = value.cast::<PyInt>().or_else(|_| make_error(&value))?;
     if value.lt(PyInt::new(py, i8::MIN))? || value.gt(PyInt::new(py, i8::MAX))? {
         return Err(PyErr::new::<PyOverflowError, _>(format!(
             "Value {} is out of range for i8: [-128, 127]",
