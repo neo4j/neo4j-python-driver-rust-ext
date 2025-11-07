@@ -38,9 +38,9 @@ fn swap_endian<'py>(
     let bytes = &data.as_bytes();
     let len = bytes.len();
     if len % type_size != 0 {
-        return Err(PyErr::new::<PyValueError, _>(
-            "Data length not a multiple of type_size",
-        ));
+        return Err(PyErr::new::<PyValueError, _>(format!(
+            "Data length {len} not a multiple of type_size {type_size}",
+        )));
     }
 
     PyBytes::new_with(py, bytes.len(), |out| {
