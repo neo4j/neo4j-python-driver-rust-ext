@@ -5,6 +5,32 @@ Changelog
 
 <!-- towncrier release notes start -->
 
+## [6.0.3.0](https://github.com/neo4j/neo4j-python-driver-rust-ext/tree/6.0.3.0) (2025-11-07)
+***
+### **⭐️ New Features**
+* Target driver version 6.0.3 ([#72]).
+
+[#72]: https://github.com/neo4j/neo4j-python-driver-rust-ext/pull/72
+
+### **👏️ Improvements**
+* Update dependencies ([#71]):  
+  * Bump dependency PyO3 (Rust binding for Python) from `0.26.0` to `0.27.1`.
+  * Update `maturin` (Python package builder) from `~= 1.9.1` to `~= 1.9.6`.
+
+[#71]: https://github.com/neo4j/neo4j-python-driver-rust-ext/pull/71
+
+### **🧹️ Clean-up**
+* Remove now unused helper functions for converting `Vector` values to/from native Python `lists` ([#70]).  
+  For more details, see [neo4j-python-driver#1263](https://github.com/neo4j/neo4j-python-driver/pull/1263).
+
+[#70]: https://github.com/neo4j/neo4j-python-driver-rust-ext/pull/70
+
+### **🧑️‍💻️ Development**
+* Improve details of internal error message ([#74]).
+
+[#74]: https://github.com/neo4j/neo4j-python-driver-rust-ext/pull/74
+
+
 ## [6.0.2.0](https://github.com/neo4j/neo4j-python-driver-rust-ext/tree/6.0.2.0) (2025-10-02)
 ***
 ### **⭐️ New Features**
