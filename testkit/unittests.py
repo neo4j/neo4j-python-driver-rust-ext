@@ -14,8 +14,12 @@
 # limitations under the License.
 
 
-from _common import run_python
+from _common import (
+    run_python,
+    TEST_LOCAL_DRIVER,
+)
 
 
 if __name__ == "__main__":
-    run_python(["-m", "tox", "-vv", "-f", "test"])
+    driver_env = "devdriver" if TEST_LOCAL_DRIVER else "releasedriver"
+    run_python(["-m", "tox", "-vv", "-f", driver_env, "test"])

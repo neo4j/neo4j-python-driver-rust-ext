@@ -19,7 +19,13 @@ import subprocess
 import sys
 
 
+_TRUE_ENV_VALS = {"1", "y", "yes", "true", "t", "on"}
+
+
 TEST_BACKEND_VERSION = os.getenv("TEST_BACKEND_VERSION", "python")
+TEST_LOCAL_DRIVER = (
+    os.environ.get("TEST_LOCAL_DRIVER", "").lower() in _TRUE_ENV_VALS
+)
 
 
 def run(args, env=None, **kwargs):
