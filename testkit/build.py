@@ -14,7 +14,10 @@
 # limitations under the License.
 
 
-from _common import run_python
+from _common import (
+    run_python,
+    TEST_LOCAL_DRIVER,
+)
 
 
 if __name__ == "__main__":
@@ -33,3 +36,5 @@ if __name__ == "__main__":
             ".",
         ]
     )
+    if TEST_LOCAL_DRIVER:
+        run_python(["-m", "pip", "install", "./driver", "--no-deps"])
