@@ -56,7 +56,7 @@ fn register_package(m: &Bound<PyModule>, name: &str) -> PyResult<()> {
 pub struct Structure {
     tag: u8,
     #[pyo3(get)]
-    fields: Vec<PyObject>,
+    fields: Vec<Py<PyAny>>,
 }
 
 #[pymethods]
@@ -64,7 +64,7 @@ impl Structure {
     #[new]
     #[pyo3(signature = (tag, *fields))]
     #[pyo3(text_signature = "(tag, *fields)")]
-    fn new(tag: &[u8], fields: Vec<PyObject>) -> PyResult<Self> {
+    fn new(tag: &[u8], fields: Vec<Py<PyAny>>) -> PyResult<Self> {
         if tag.len() != 1 {
             return Err(PyErr::new::<PyValueError, _>("tag must be a single byte"));
         }
@@ -99,7 +99,7 @@ impl Structure {
         Ok(true)
     }
 
-    fn __richcmp__(&self, other: &Self, op: CompareOp, py: Python<'_>) -> PyResult<PyObject> {
+    fn __richcmp__(&self, other: &Self, op: CompareOp, py: Python<'_>) -> PyResult<Py<PyAny>> {
         Ok(match op {
             CompareOp::Eq => self.eq(other, py)?.into_py_any(py)?,
             CompareOp::Ne => (!self.eq(other, py)?).into_py_any(py)?,
