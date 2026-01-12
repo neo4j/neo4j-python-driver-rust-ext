@@ -59,7 +59,7 @@ pandas = ["neo4j[pandas]"]
 pyarrow = ["neo4j[pyarrow]"]
 
 [build-system]
-requires = ["maturin ~= 1.9.6"]
+requires = ["maturin ~= 1.11.5"]
 build-backend = "maturin"
 
 [dependency-groups]
