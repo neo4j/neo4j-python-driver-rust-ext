@@ -42,13 +42,15 @@ ENV PYENV_ROOT=/.pyenv
 ENV PATH="$PYENV_ROOT/shims:$PYENV_ROOT/bin:$PATH"
 
 # Setup python version
-ENV PYTHON_VERSIONS="3.13 3.12 3.11 3.10 3.9 3.8 3.7"
+ENV PYTHON_VERSIONS="3.13 3.12 3.11 3.10 3.9 3.8 3.7 3.13t"
 
 RUN for version in $PYTHON_VERSIONS; do \
         pyenv install $version; \
     done
 RUN pyenv rehash
-RUN pyenv global $(pyenv versions --bare --skip-aliases | sort --version-sort --reverse)
+RUN pyenv global \
+    $(pyenv versions --bare --skip-aliases | grep --invert-match t | sort --version-sort --reverse) \
+    $(pyenv versions --bare --skip-aliases | grep t | sort --version-sort --reverse)
 
 # Install Latest pip and setuptools for each environment
 # + tox and tools for starting the tests
@@ -61,17 +63,3 @@ RUN for version in $PYTHON_VERSIONS; do \
 # Install Rust toolchain
 RUN curl https://sh.rustup.rs -sSf | bash -s -- -y
 ENV PATH="/root/.cargo/bin:${PATH}"
-
-# Installing pyarrow lib until pre-built wheel for Python 3.13 exists
-# https://github.com/apache/arrow/issues/43519
-RUN apt update && \
-    apt install -y -V lsb-release cmake gcc && \
-    distro_name=$(lsb_release --id --short | tr 'A-Z' 'a-z') && \
-    code_name=$(lsb_release --codename --short) && \
-    wget https://apache.jfrog.io/artifactory/arrow/${distro_name}/apache-arrow-apt-source-latest-${code_name}.deb && \
-    apt install -y -V ./apache-arrow-apt-source-latest-${code_name}.deb && \
-    apt update && \
-    apt install -y -V libarrow-dev libarrow-dataset-dev libarrow-flight-dev libparquet-dev && \
-    apt clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-ENV PYARROW_WITH_CUDA=off
-ENV PYARROW_WITH_GANDIVA=of

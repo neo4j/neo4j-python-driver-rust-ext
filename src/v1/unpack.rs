@@ -15,7 +15,7 @@
 
 use pyo3::exceptions::PyValueError;
 use pyo3::prelude::*;
-use pyo3::sync::with_critical_section;
+use pyo3::sync::critical_section::with_critical_section;
 use pyo3::types::{IntoPyDict, PyByteArray, PyBytes, PyDict, PyList, PyTuple};
 use pyo3::{intern, IntoPyObjectExt};
 

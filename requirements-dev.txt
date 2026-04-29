@@ -1,5 +1,3 @@
-.[numpy,pandas,pyarrow]
-
 # for local development
 pre-commit>=2.21.0  # TODO: 6.0 - bump when support for Python 3.7 is dropped
 isort>=5.11.5  # TODO: 6.0 - bump when support for Python 3.7 is dropped
