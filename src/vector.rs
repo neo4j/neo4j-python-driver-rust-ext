@@ -68,7 +68,6 @@ fn swap_n<const N: usize>(src: &[u8], dst: &mut [u8]) {
 }
 
 pub(super) fn init_module(m: &Bound<PyModule>, name: &str) -> PyResult<()> {
-    m.gil_used(false)?;
     register_package(m, name)?;
 
     m.add_function(wrap_pyfunction!(swap_endian, m)?)?;

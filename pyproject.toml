@@ -59,7 +59,7 @@ pandas = ["neo4j[pandas]"]
 pyarrow = ["neo4j[pyarrow]"]
 
 [build-system]
-requires = ["maturin ~= 1.11.5"]
+requires = ["maturin ~= 1.13.0"]
 build-backend = "maturin"
 
 [dependency-groups]
@@ -74,7 +74,7 @@ dev = [
     {include-group = "packaging"},
 ]
 tox = [
-    "tox >= 4.25.0",
+    "tox >= 4.26.0",
 ]
 precommit = [
     "pre-commit >= 4.2.0",
@@ -87,7 +87,7 @@ test = [
 ]
 packaging = [
     "build",
-    "maturin ~= 1.9.6",
+    "maturin ~= 1.13.0",
     "towncrier >= 24.8.0",
 ]
 
