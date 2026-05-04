@@ -18,7 +18,7 @@ mod vector;
 
 use pyo3::prelude::*;
 
-#[pymodule(gil_used = false)]
+#[pymodule]
 #[pyo3(name = "_rust")]
 fn init_module(m: &Bound<PyModule>) -> PyResult<()> {
     let py = m.py();

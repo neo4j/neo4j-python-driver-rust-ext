@@ -47,7 +47,6 @@ const BYTES_16: u8 = 0xCD;
 const BYTES_32: u8 = 0xCE;
 
 pub(crate) fn init_module(m: &Bound<PyModule>, name: &str) -> PyResult<()> {
-    m.gil_used(false)?;
     register_package(m, name)?;
 
     m.add_function(wrap_pyfunction!(unpack::unpack, m)?)?;
