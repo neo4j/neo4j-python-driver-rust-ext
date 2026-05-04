@@ -22,7 +22,6 @@ use crate::register_package;
 pub(super) fn init_module(m: &Bound<PyModule>, name: &str) -> PyResult<()> {
     let py = m.py();
 
-    m.gil_used(false)?;
     register_package(m, name)?;
 
     let mod_packstream = PyModule::new(py, "packstream")?;

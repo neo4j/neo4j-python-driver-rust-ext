@@ -18,7 +18,7 @@ use std::sync::OnceLock;
 
 use pyo3::exceptions::{PyOverflowError, PyTypeError, PyValueError};
 use pyo3::prelude::*;
-use pyo3::sync::with_critical_section;
+use pyo3::sync::critical_section::with_critical_section;
 use pyo3::sync::OnceLockExt;
 use pyo3::types::{PyByteArray, PyBytes, PyDict, PyString, PyTuple, PyType};
 use pyo3::{intern, IntoPyObjectExt};

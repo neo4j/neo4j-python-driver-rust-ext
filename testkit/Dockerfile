@@ -42,13 +42,15 @@ ENV PYENV_ROOT=/.pyenv
 ENV PATH="$PYENV_ROOT/shims:$PYENV_ROOT/bin:$PATH"
 
 # Setup python version
-ENV PYTHON_VERSIONS="3.14 3.13 3.12 3.11 3.10"
+ENV PYTHON_VERSIONS="3.14 3.13 3.12 3.11 3.10 3.14t 3.13t"
 
 RUN for version in $PYTHON_VERSIONS; do \
         pyenv install $version; \
     done
 RUN pyenv rehash
-RUN pyenv global $(pyenv versions --bare --skip-aliases | sort --version-sort --reverse)
+RUN pyenv global \
+    $(pyenv versions --bare --skip-aliases | grep --invert-match t | sort --version-sort --reverse) \
+    $(pyenv versions --bare --skip-aliases | grep t | sort --version-sort --reverse)
 
 # Install Latest pip for each environment
 # + tox and tools for starting the tests
