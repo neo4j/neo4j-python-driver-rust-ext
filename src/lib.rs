@@ -21,7 +21,7 @@ use pyo3::prelude::*;
 use pyo3::types::{PyBytes, PyTuple};
 use pyo3::{IntoPyObjectExt, PyTraverseError, PyVisit};
 
-#[pymodule(gil_used = false)]
+#[pymodule]
 #[pyo3(name = "_rust")]
 fn packstream(m: &Bound<PyModule>) -> PyResult<()> {
     let py = m.py();
@@ -29,7 +29,6 @@ fn packstream(m: &Bound<PyModule>) -> PyResult<()> {
     m.add_class::<Structure>()?;
 
     let mod_v1 = PyModule::new(py, "v1")?;
-    mod_v1.gil_used(false)?;
     v1::register(&mod_v1)?;
     m.add_submodule(&mod_v1)?;
     register_package(&mod_v1, "v1")?;

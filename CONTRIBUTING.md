@@ -58,7 +58,7 @@ Remember that many community members have become regular contributors and some a
  * Install the requirements
    ```bash
    $ python3 -m pip install -U pip
-   $ python3 -m pip install -Ur requirements-dev.txt
+   $ python3 -m pip install -Ur requirements-dev.txt .[numpy,pandas,pyarrow]
    ```
 * Install pre-commit hooks to notice mistakes before the CI does it for you ;)
   ```bash
