@@ -15,7 +15,7 @@ Changelog
 
 ### **👏️ Improvements**
 * Update dependencies ([#83]):
-  * Update `maturin` (Python package builder) from `~= 1.11.5` to `~= 1.13.0`.
+  * Update `maturin` (Python package builder) from `~= 1.11.5` to `~= 1.13.1`.
   * Update `PyO3` from `0.27.2` to `0.28.3`.
 
 [#83]: https://github.com/neo4j/neo4j-python-driver-rust-ext/pull/83
