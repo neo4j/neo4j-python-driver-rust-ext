@@ -172,31 +172,33 @@ impl<'a> PackStreamEncoder<'a> {
         Self {
             dehydration_hooks,
             type_mappings,
-            buffer: Default::default(),
+            buffer: Vec::default(),
         }
     }
 
     fn write(&mut self, value: &Bound<PyAny>) -> PyResult<()> {
         let py = value.py();
 
-        if self.write_exact_value(value, &self.type_mappings.none_values, &[NULL])? {
+        if self.write_exact_value(value, &self.type_mappings.none_values, &[NULL]) {
             return Ok(());
         }
-        if self.write_exact_value(value, &self.type_mappings.true_values, &[TRUE])? {
+        if self.write_exact_value(value, &self.type_mappings.true_values, &[TRUE]) {
             return Ok(());
         }
-        if self.write_exact_value(value, &self.type_mappings.false_values, &[FALSE])? {
+        if self.write_exact_value(value, &self.type_mappings.false_values, &[FALSE]) {
             return Ok(());
         }
 
         if value.is_instance(self.type_mappings.float_types.bind(py))? {
             let value = value.extract::<f64>()?;
-            return self.write_float(value);
+            self.write_float(value);
+            return Ok(());
         }
 
         if value.is_instance(self.type_mappings.int_types.bind(py))? {
             let value = value.extract::<i64>()?;
-            return self.write_int(value);
+            self.write_int(value);
+            return Ok(());
         }
 
         if value.is_instance(&PyType::new::<PyString>(py))? {
@@ -229,14 +231,11 @@ impl<'a> PackStreamEncoder<'a> {
             let items = value.getattr(intern!(py, "items"))?.call0()?;
             return items.try_iter()?.try_for_each(|item| {
                 let (key, value) = item?.extract::<(Bound<PyAny>, Bound<PyAny>)>()?;
-                let key = match key.extract::<&str>() {
-                    Ok(key) => key,
-                    Err(_) => {
-                        return Err(PyErr::new::<PyTypeError, _>(format!(
-                            "Map keys must be strings, not {}",
-                            key.get_type().str()?
-                        )))
-                    }
+                let Ok(key) = key.extract::<&str>() else {
+                    return Err(PyErr::new::<PyTypeError, _>(format!(
+                        "Map keys must be strings, not {}",
+                        key.get_type().str()?
+                    )));
                 };
                 self.write_string(key)?;
                 self.write(&value)
@@ -276,51 +275,54 @@ impl<'a> PackStreamEncoder<'a> {
         value: &Bound<PyAny>,
         values: &[Py<PyAny>],
         bytes: &[u8],
-    ) -> PyResult<bool> {
+    ) -> bool {
         for v in values {
             if value.is(v) {
                 self.buffer.extend(bytes);
-                return Ok(true);
+                return true;
             }
         }
-        Ok(false)
+        false
     }
 
-    fn write_int(&mut self, i: i64) -> PyResult<()> {
-        if (-16..=127).contains(&i) {
-            self.buffer.extend(&i8::to_be_bytes(i as i8));
-        } else if (-128..=127).contains(&i) {
-            self.buffer.extend(&[INT_8]);
-            self.buffer.extend(&i8::to_be_bytes(i as i8));
-        } else if (-32_768..=32_767).contains(&i) {
+    fn write_int(&mut self, i: i64) {
+        if let Ok(i) = i8::try_from(i) {
+            if i >= -16 {
+                self.buffer.extend(&i8::to_be_bytes(i));
+            } else {
+                self.buffer.extend(&[INT_8]);
+                self.buffer.extend(&i8::to_be_bytes(i));
+            }
+        } else if let Ok(i) = i16::try_from(i) {
             self.buffer.extend(&[INT_16]);
-            self.buffer.extend(&i16::to_be_bytes(i as i16));
-        } else if (-2_147_483_648..=2_147_483_647).contains(&i) {
+            self.buffer.extend(&i16::to_be_bytes(i));
+        } else if let Ok(i) = i32::try_from(i) {
             self.buffer.extend(&[INT_32]);
-            self.buffer.extend(&i32::to_be_bytes(i as i32));
+            self.buffer.extend(&i32::to_be_bytes(i));
         } else {
             self.buffer.extend(&[INT_64]);
             self.buffer.extend(&i64::to_be_bytes(i));
         }
-        Ok(())
     }
 
-    fn write_float(&mut self, f: f64) -> PyResult<()> {
+    fn write_float(&mut self, f: f64) {
         self.buffer.extend(&[FLOAT_64]);
         self.buffer.extend(&f64::to_be_bytes(f));
-        Ok(())
     }
 
     fn write_bytes(&mut self, b: &[u8]) -> PyResult<()> {
         let size = Self::usize_to_u64(b.len())?;
-        if size <= 255 {
+        if size <= u8::MAX.into() {
             self.buffer.extend(&[BYTES_8]);
+            #[expect(clippy::cast_possible_truncation, reason = "checked bounds")]
             self.buffer.extend(&u8::to_be_bytes(size as u8));
-        } else if size <= 65_535 {
+        } else if size <= u16::MAX.into() {
             self.buffer.extend(&[BYTES_16]);
+            #[expect(clippy::cast_possible_truncation, reason = "checked bounds")]
             self.buffer.extend(&u16::to_be_bytes(size as u16));
-        } else if size <= 2_147_483_647 {
+        } else if size <= u32::MAX.into() {
             self.buffer.extend(&[BYTES_32]);
+            #[expect(clippy::cast_possible_truncation, reason = "checked bounds")]
             self.buffer.extend(&u32::to_be_bytes(size as u32));
         } else {
             return Err(PyErr::new::<PyOverflowError, _>(
@@ -339,15 +341,19 @@ impl<'a> PackStreamEncoder<'a> {
         let bytes = s.as_bytes();
         let size = Self::usize_to_u64(bytes.len())?;
         if size <= 15 {
+            #[expect(clippy::cast_possible_truncation, reason = "checked bounds")]
             self.buffer.extend(&[TINY_STRING + size as u8]);
-        } else if size <= 255 {
+        } else if size <= u8::MAX.into() {
             self.buffer.extend(&[STRING_8]);
+            #[expect(clippy::cast_possible_truncation, reason = "checked bounds")]
             self.buffer.extend(&u8::to_be_bytes(size as u8));
-        } else if size <= 65_535 {
+        } else if size <= u16::MAX.into() {
             self.buffer.extend(&[STRING_16]);
+            #[expect(clippy::cast_possible_truncation, reason = "checked bounds")]
             self.buffer.extend(&u16::to_be_bytes(size as u16));
-        } else if size <= 2_147_483_647 {
+        } else if size <= u32::MAX.into() {
             self.buffer.extend(&[STRING_32]);
+            #[expect(clippy::cast_possible_truncation, reason = "checked bounds")]
             self.buffer.extend(&u32::to_be_bytes(size as u32));
         } else {
             return Err(PyErr::new::<PyOverflowError, _>(
@@ -360,15 +366,19 @@ impl<'a> PackStreamEncoder<'a> {
 
     fn write_list_header(&mut self, size: u64) -> PyResult<()> {
         if size <= 15 {
+            #[expect(clippy::cast_possible_truncation, reason = "checked bounds")]
             self.buffer.extend(&[TINY_LIST + size as u8]);
-        } else if size <= 255 {
+        } else if size <= u8::MAX.into() {
             self.buffer.extend(&[LIST_8]);
+            #[expect(clippy::cast_possible_truncation, reason = "checked bounds")]
             self.buffer.extend(&u8::to_be_bytes(size as u8));
-        } else if size <= 65_535 {
+        } else if size <= u16::MAX.into() {
             self.buffer.extend(&[LIST_16]);
+            #[expect(clippy::cast_possible_truncation, reason = "checked bounds")]
             self.buffer.extend(&u16::to_be_bytes(size as u16));
-        } else if size <= 2_147_483_647 {
+        } else if size <= u32::MAX.into() {
             self.buffer.extend(&[LIST_32]);
+            #[expect(clippy::cast_possible_truncation, reason = "checked bounds")]
             self.buffer.extend(&u32::to_be_bytes(size as u32));
         } else {
             return Err(PyErr::new::<PyOverflowError, _>(
@@ -380,15 +390,19 @@ impl<'a> PackStreamEncoder<'a> {
 
     fn write_dict_header(&mut self, size: u64) -> PyResult<()> {
         if size <= 15 {
+            #[expect(clippy::cast_possible_truncation, reason = "checked bounds")]
             self.buffer.extend(&[TINY_MAP + size as u8]);
-        } else if size <= 255 {
+        } else if size <= u8::MAX.into() {
             self.buffer.extend(&[MAP_8]);
+            #[expect(clippy::cast_possible_truncation, reason = "checked bounds")]
             self.buffer.extend(&u8::to_be_bytes(size as u8));
-        } else if size <= 65_535 {
+        } else if size <= u16::MAX.into() {
             self.buffer.extend(&[MAP_16]);
+            #[expect(clippy::cast_possible_truncation, reason = "checked bounds")]
             self.buffer.extend(&u16::to_be_bytes(size as u16));
-        } else if size <= 2_147_483_647 {
+        } else if size <= u32::MAX.into() {
             self.buffer.extend(&[MAP_32]);
+            #[expect(clippy::cast_possible_truncation, reason = "checked bounds")]
             self.buffer.extend(&u32::to_be_bytes(size as u32));
         } else {
             return Err(PyErr::new::<PyOverflowError, _>(

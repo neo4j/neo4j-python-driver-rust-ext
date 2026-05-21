@@ -13,6 +13,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#![warn(clippy::undocumented_unsafe_blocks)]
+#![warn(clippy::allow_attributes_without_reason)]
+#![warn(clippy::pedantic)]
+
 mod codec;
 mod vector;
 
