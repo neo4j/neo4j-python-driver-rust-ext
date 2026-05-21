@@ -63,7 +63,7 @@ impl TypeMappings {
                         let Ok(typ) = typ.cast::<PyType>() else {
                             return true;
                         };
-                        is_of_known_bytes_types(typ).map(|b| !b).unwrap_or(true)
+                        is_of_known_bytes_types(typ).map_or(true, |b| !b)
                     })
                     .collect::<Result<Vec<_>, _>>()?;
 
