@@ -13,6 +13,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+use std::marker::PhantomData;
+
 use pyo3::exceptions::PyValueError;
 use pyo3::prelude::*;
 use pyo3::sync::critical_section::with_critical_section;
@@ -20,33 +22,33 @@ use pyo3::types::{IntoPyDict, PyByteArray, PyBytes, PyDict, PyList, PyTuple};
 use pyo3::{intern, IntoPyObjectExt};
 
 use super::super::Structure;
+use super::extension::PackStreamV1Ext;
 use super::{
     BYTES_16, BYTES_32, BYTES_8, FALSE, FLOAT_64, INT_16, INT_32, INT_64, INT_8, LIST_16, LIST_32,
     LIST_8, MAP_16, MAP_32, MAP_8, NULL, STRING_16, STRING_32, STRING_8, TINY_LIST, TINY_MAP,
     TINY_STRING, TINY_STRUCT, TRUE,
 };
 
-#[pyfunction]
-#[pyo3(signature = (bytes, idx, hydration_hooks=None))]
-pub(super) fn unpack(
+pub(crate) fn unpack<E: PackStreamV1Ext>(
     bytes: Bound<PyByteArray>,
     idx: usize,
     hydration_hooks: Option<Bound<PyDict>>,
 ) -> PyResult<(Py<PyAny>, usize)> {
     let py = bytes.py();
-    let mut decoder = PackStreamDecoder::new(py, bytes, idx, hydration_hooks);
+    let mut decoder = PackStreamDecoder::<E>::new(py, bytes, idx, hydration_hooks);
     let result = decoder.read()?;
     Ok((result, decoder.index))
 }
 
-struct PackStreamDecoder<'a> {
+pub(crate) struct PackStreamDecoder<'a, E: PackStreamV1Ext> {
+    ext: PhantomData<E>,
     py: Python<'a>,
     bytes: Bound<'a, PyByteArray>,
     index: usize,
     hydration_hooks: Option<Bound<'a, PyDict>>,
 }
 
-impl<'a> PackStreamDecoder<'a> {
+impl<'a, E: PackStreamV1Ext> PackStreamDecoder<'a, E> {
     fn new(
         py: Python<'a>,
         bytes: Bound<'a, PyByteArray>,
@@ -54,6 +56,7 @@ impl<'a> PackStreamDecoder<'a> {
         hydration_hooks: Option<Bound<'a, PyDict>>,
     ) -> Self {
         Self {
+            ext: PhantomData,
             py,
             bytes,
             index: idx,
@@ -133,10 +136,13 @@ impl<'a> PackStreamDecoder<'a> {
             }
             _ if high_nibble == TINY_STRUCT => self.read_struct((marker & 0x0F).into())?,
             _ => {
-                // raise ValueError("Unknown PackStream marker %02X" % marker)
-                return Err(PyErr::new::<PyValueError, _>(format!(
-                    "Unknown PackStream marker {marker:02X}",
-                )));
+                let Some(value) = E::unpack_ext(marker, self)? else {
+                    // raise ValueError("Unknown PackStream marker %02X" % marker)
+                    return Err(PyErr::new::<PyValueError, _>(format!(
+                        "Unknown PackStream marker {marker:02X}",
+                    )));
+                };
+                value
             }
         })
     }
@@ -262,7 +268,7 @@ impl<'a> PackStreamDecoder<'a> {
         Ok(byte)
     }
 
-    fn read_n_bytes<const N: usize>(&mut self) -> PyResult<[u8; N]> {
+    pub(crate) fn read_n_bytes<const N: usize>(&mut self) -> PyResult<[u8; N]> {
         let to = self.index + N;
         with_critical_section(&self.bytes, || {
             // Safety:
@@ -319,5 +325,10 @@ impl<'a> PackStreamDecoder<'a> {
 
     fn read_f64(&mut self) -> PyResult<f64> {
         self.read_n_bytes().map(f64::from_be_bytes)
+    }
+
+    #[inline]
+    pub(crate) fn py(&self) -> Python<'a> {
+        self.py
     }
 }
