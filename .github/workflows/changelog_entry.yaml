@@ -1,0 +1,39 @@
+name: Changelog Entry
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, labeled, unlabeled]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  check:
+    name: Check changelog entry
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify changelog entry or "no changelog" label
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          LABELS: ${{ toJson(github.event.pull_request.labels.*.name) }}
+        run: |
+          set -euo pipefail
+          if echo "$LABELS" | jq -e 'index("no changelog")' > /dev/null; then
+            echo "PR is labeled 'no changelog' - skipping check."
+            exit 0
+          fi
+          expected="^changelog\\.d/${PR_NUMBER}\\.[^/]+\\.md$"
+          matching=$(gh api "repos/$REPO/pulls/$PR_NUMBER/files" --paginate \
+            | jq -r '.[] | select(.status == "added") | .filename' \
+            | grep -E "$expected" \
+            || true)
+          if [ -z "$matching" ]; then
+            echo "::error::PR must add a file named 'changelog.d/${PR_NUMBER}.<type>.md' or carry the 'no changelog' label."
+            echo "See changelog.d/README.md for how to create an entry."
+            exit 1
+          fi
+          echo "Found new changelog entry/entries:"
+          echo "$matching"
