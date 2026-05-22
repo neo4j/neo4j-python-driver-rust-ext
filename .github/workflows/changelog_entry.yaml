@@ -13,6 +13,7 @@ jobs:
     name: Check changelog entry
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
       - name: Verify changelog entry or "no changelog" label
         env:
           GH_TOKEN: ${{ github.token }}
@@ -37,3 +38,18 @@ jobs:
           fi
           echo "Found new changelog entry/entries:"
           echo "$matching"
+          echo "Checking changelog entries contain '<ISSUES_LIST>' placeholder on the first line..."
+          missing=()
+          while IFS= read -r file; do
+            if ! head -n 1 "$file" | grep -qF '<ISSUES_LIST>'; then
+              missing+=("$file")
+            fi
+          done <<< "$matching"
+          if [ ${#missing[@]} -gt 0 ]; then
+            echo "::error::The following changelog entries must contain '<ISSUES_LIST>' on the first line:"
+            for f in "${missing[@]}"; do
+              echo "  - $f"
+            done
+            echo "See changelog.d/README.md for the expected format."
+            exit 1
+          fi
