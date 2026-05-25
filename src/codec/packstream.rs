@@ -65,18 +65,22 @@ impl Structure {
     }
 
     fn compute_index(&self, index: isize) -> PyResult<usize> {
-        Ok(if index < 0 {
+        fn index_err() -> PyErr {
+            PyErr::new::<PyIndexError, _>("field index out of range")
+        }
+
+        if index < 0 {
             self.fields
                 .len()
-                .checked_sub(-index as usize)
-                .ok_or_else(|| PyErr::new::<PyIndexError, _>("field index out of range"))?
+                .checked_add_signed(index)
+                .ok_or_else(index_err)
         } else {
-            let index = index as usize;
+            let index = index.try_into().map_err(|_| index_err())?;
             if index >= self.fields.len() {
-                return Err(PyErr::new::<PyIndexError, _>("field index out of range"));
+                return Err(index_err());
             }
-            index
-        })
+            Ok(index)
+        }
     }
 }
 
@@ -131,6 +135,7 @@ impl Structure {
         Ok(())
     }
 
+    #[expect(clippy::needless_pass_by_value, reason = "Needed for pyo3 to be happy")]
     fn __traverse__(&self, visit: PyVisit<'_>) -> Result<(), PyTraverseError> {
         for field in &self.fields {
             visit.call(field)?;
