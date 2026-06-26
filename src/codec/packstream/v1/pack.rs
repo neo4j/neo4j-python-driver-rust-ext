@@ -14,6 +14,7 @@
 // limitations under the License.
 
 use std::borrow::Cow;
+use std::cell::Cell;
 use std::sync::OnceLock;
 
 use pyo3::exceptions::{PyOverflowError, PyTypeError, PyValueError};
@@ -145,6 +146,30 @@ fn get_type_mappings(py: Python<'_>) -> PyResult<&'static TypeMappings> {
     mappings.as_ref().map_err(|e| e.clone_ref(py))
 }
 
+/// Buffers larger than this are not returned to the per-thread pool, so a single
+/// oversized message cannot pin a large allocation for the lifetime of a thread.
+const MAX_POOLED_PACK_BUFFER: usize = 64 * 1024;
+
+thread_local! {
+    /// Per-thread scratch buffer reused across `pack` calls. Holding it in a
+    /// `Cell<Option<_>>` (rather than borrowing it for the whole call) keeps the
+    /// reuse reentrancy-safe: a nested `pack` triggered by a Python callback
+    /// simply takes a fresh buffer and the slot is restored on the way out.
+    static PACK_BUFFER: Cell<Option<Vec<u8>>> = const { Cell::new(None) };
+}
+
+fn take_pack_buffer() -> Vec<u8> {
+    PACK_BUFFER.with(Cell::take).unwrap_or_default()
+}
+
+fn return_pack_buffer(mut buffer: Vec<u8>) {
+    if buffer.capacity() > MAX_POOLED_PACK_BUFFER {
+        return;
+    }
+    buffer.clear();
+    PACK_BUFFER.with(|slot| slot.set(Some(buffer)));
+}
+
 #[pyfunction]
 #[pyo3(signature = (value, dehydration_hooks=None))]
 pub(super) fn pack<'py>(
@@ -154,8 +179,11 @@ pub(super) fn pack<'py>(
     let py = value.py();
     let type_mappings = get_type_mappings(py)?;
     let mut encoder = PackStreamEncoder::new(dehydration_hooks, type_mappings);
-    encoder.write(value)?;
-    Ok(PyBytes::new(py, &encoder.buffer))
+    encoder.buffer = take_pack_buffer();
+    let result = encoder.write(value);
+    let packed = result.map(|()| PyBytes::new(py, &encoder.buffer));
+    return_pack_buffer(std::mem::take(&mut encoder.buffer));
+    packed
 }
 
 struct PackStreamEncoder<'a> {
