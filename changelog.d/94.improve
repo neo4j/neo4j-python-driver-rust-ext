@@ -1,0 +1,4 @@
+Update `PyO3` from `0.28.8` to `0.29.0`<ISSUES_LIST>.
+* This fixes GHSA-36hh-v3qg-5jq4, even though this project is not believed to be vulnerable to this issue.
+* Note that `PyO3` version `0.29.0` dropped support for Python 3.7.
+  Therefore, this dependency bump is only available on Python 3.8 and newer.
