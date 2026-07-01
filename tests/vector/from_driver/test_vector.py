@@ -29,6 +29,7 @@ import pytest
 from neo4j._optional_deps import (
     np,
     pa,
+    pa_compute,
 )
 from neo4j.vector import (
     _swap_endian,
@@ -234,7 +235,7 @@ def _mock_mask_extensions(
 
     match used_ext:
         case "numpy":
-            if _swap_endian_unchecked_np is None:
+            if np is None:
                 pytest.skip("numpy not installed")
             mocker.patch(
                 "neo4j.vector._swap_endian_unchecked",
@@ -1049,7 +1050,7 @@ def test_to_pyarrow_random(
         v = _vector_from_data(data_be, dtype, endian)
         array = v.to_pyarrow()
         assert array.type == pa_type
-        assert pa.compute.count(array, mode="only_null").as_py() == 0
+        assert pa_compute.count(array, mode="only_null").as_py() == 0
         buffers = array.buffers()
         assert len(buffers) == 2
         assert buffers[0] is None
@@ -1081,7 +1082,7 @@ def test_to_pyarrow_special_values(
     v = _vector_from_data(data_be, dtype, endian)
     array = v.to_pyarrow()
     assert array.type == pa_type
-    assert pa.compute.count(array, mode="only_null").as_py() == 0
+    assert pa_compute.count(array, mode="only_null").as_py() == 0
     buffers = array.buffers()
     assert len(buffers) == 2
     assert buffers[0] is None
