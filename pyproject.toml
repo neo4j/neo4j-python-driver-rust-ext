@@ -97,7 +97,6 @@ dep-project-dependencies = [
 ]
 
 [tool.maturin]
-features = ["pyo3/extension-module", "pyo3/generate-import-lib"]
 module-name = "neo4j._rust"
 exclude = [
     "/.editorconfig",
