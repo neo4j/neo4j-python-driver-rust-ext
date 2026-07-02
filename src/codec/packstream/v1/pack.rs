@@ -426,6 +426,6 @@ impl<'a, E: PackStreamV1Ext> PackStreamEncoder<'a, E> {
 
     #[inline]
     pub(crate) fn write_raw<'b, I: IntoIterator<Item = &'b u8>>(&mut self, iter: I) {
-        self.buffer.extend(iter)
+        self.buffer.extend(iter);
     }
 }
