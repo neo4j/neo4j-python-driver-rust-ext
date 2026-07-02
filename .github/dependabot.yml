@@ -1,6 +1,19 @@
 version: 2
 updates:
   - package-ecosystem: "github-actions"
+    target-branch: "6.x"
+    directory: "/"
+    schedule:
+      interval: daily
+    cooldown:
+      default-days: 3
+    open-pull-requests-limit: 5
+    labels:
+      - "no changelog"
+    assignees:
+      - "robsdedude"
+  - package-ecosystem: "github-actions"
+    target-branch: "5.0"
     directory: "/"
     schedule:
       interval: daily
