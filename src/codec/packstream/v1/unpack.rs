@@ -74,6 +74,7 @@ impl<'a, E: PackStreamV1Ext> PackStreamDecoder<'a, E> {
 
         Ok(match marker {
             // tiny int
+            #[expect(clippy::cast_possible_wrap, reason = "wrapping is what we want")]
             _ if marker as i8 >= -16 => (marker as i8).into_py_any(self.py)?,
             NULL => self.py.None(),
             FLOAT_64 => self.read_f64()?.into_py_any(self.py)?,
@@ -85,15 +86,15 @@ impl<'a, E: PackStreamV1Ext> PackStreamDecoder<'a, E> {
             INT_64 => self.read_i64()?.into_py_any(self.py)?,
             BYTES_8 => {
                 let len = self.read_u8()?;
-                self.read_bytes(len)?
+                self.read_bytes(len)
             }
             BYTES_16 => {
                 let len = self.read_u16()?;
-                self.read_bytes(len)?
+                self.read_bytes(len)
             }
             BYTES_32 => {
                 let len = self.read_u32()?;
-                self.read_bytes(len)?
+                self.read_bytes(len)
             }
             _ if high_nibble == TINY_STRING => self.read_string((marker & 0x0F).into())?,
             STRING_8 => {
@@ -194,9 +195,9 @@ impl<'a, E: PackStreamV1Ext> PackStreamDecoder<'a, E> {
         Ok(key_value_pairs.into_py_dict(self.py)?.into())
     }
 
-    fn read_bytes(&mut self, length: usize) -> PyResult<Py<PyAny>> {
+    fn read_bytes(&mut self, length: usize) -> Py<PyAny> {
         if length == 0 {
-            return Ok(PyBytes::new(self.py, &[]).into_any().unbind());
+            return PyBytes::new(self.py, &[]).into_any().unbind();
         }
         let data = with_critical_section(&self.bytes, || {
             // Safety:
@@ -211,14 +212,14 @@ impl<'a, E: PackStreamV1Ext> PackStreamDecoder<'a, E> {
             }
         });
         self.index += length;
-        Ok(PyBytes::new(self.py, &data).into_any().unbind())
+        PyBytes::new(self.py, &data).into_any().unbind()
     }
 
     fn read_struct(&mut self, length: usize) -> PyResult<Py<PyAny>> {
         let tag = self.read_byte()?;
         let mut fields = Vec::with_capacity(length);
         for _ in 0..length {
-            fields.push(self.read()?)
+            fields.push(self.read()?);
         }
         let mut bolt_struct = Structure { tag, fields }
             .into_pyobject(self.py)?

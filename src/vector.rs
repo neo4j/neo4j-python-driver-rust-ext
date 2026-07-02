@@ -22,13 +22,13 @@ use crate::register_package;
 
 #[pyfunction]
 fn swap_endian<'py>(
-    type_size: Bound<'py, PyInt>,
-    data: Bound<'py, PyBytes>,
+    type_size: &Bound<'py, PyInt>,
+    data: &Bound<'py, PyBytes>,
 ) -> PyResult<Bound<'py, PyBytes>> {
     let py = type_size.py();
 
     let type_size: usize = match type_size.extract::<usize>() {
-        Ok(type_size @ 2) | Ok(type_size @ 4) | Ok(type_size @ 8) => type_size,
+        Ok(type_size @ (2 | 4 | 8)) => type_size,
         _ => {
             return Err(PyErr::new::<PyValueError, _>(format!(
                 "Unsupported type size {type_size}",
@@ -54,6 +54,7 @@ fn swap_endian<'py>(
     })
 }
 
+#[allow(clippy::inline_always, reason = "hot path")]
 #[inline(always)]
 fn swap_n<const N: usize>(src: &[u8], dst: &mut [u8]) {
     // Doesn't technically need to be a function with a const generic, but this
