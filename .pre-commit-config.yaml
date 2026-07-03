@@ -31,7 +31,15 @@ repos:
     hooks:
       - id: cargo-clippy
         name: cargo clippy
-        entry: cargo clippy --all-features --tests -- -D warnings
+        entry: cargo clippy --all-features --tests --locked -- -D warnings
+        language: system
+        types: [rust]
+        pass_filenames: false
+  - repo: local
+    hooks:
+      - id: cargo-clippy-py37
+        name: cargo clippy (Python 3.7)
+        entry: cargo clippy --manifest-path cargo_py37/Cargo.toml --all-features --tests --locked -- -D warnings
         language: system
         types: [rust]
         pass_filenames: false
