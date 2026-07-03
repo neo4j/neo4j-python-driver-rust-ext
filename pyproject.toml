@@ -62,17 +62,26 @@ pyarrow = ["neo4j[pyarrow]"]
 
 [build-system]
 requires = ["maturin ~= 1.13.1"]
-build-backend = "maturin"
+build-backend = "neo4j_rust_ext_build"
+backend-path = ["build_backend"]
 
 [tool.maturin]
-features = ["pyo3/extension-module", "pyo3/generate-import-lib"]
+features = [
+    { feature = "pyo3/generate-import-lib", python-version = "<3.8" },
+]
 module-name = "neo4j._codec.packstream._rust"
+include = [
+    { path = "build_backend/**", format = ["sdist"] },
+    { path = "cargo_py37/Cargo.*", format = ["sdist"] },
+]
 exclude = [
-    "/.editorconfig",
+    ".editorconfig",
     ".gitignore",
     ".gitmodules",
     ".pre-commit-config.yaml",
+    ".semgrepignore",
     "bin/**/*",
+    "changelog.d/**",
     "driver/**/*",
     "test*/**/*",
     "CONTRIBUTING.md",
