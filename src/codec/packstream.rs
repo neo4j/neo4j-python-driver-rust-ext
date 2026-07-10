@@ -13,7 +13,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+mod uuid;
 mod v1;
+mod v2;
 
 use pyo3::basic::CompareOp;
 use pyo3::exceptions::{PyIndexError, PyValueError};
@@ -32,6 +34,10 @@ pub(super) fn init_module(m: &Bound<PyModule>, name: &str) -> PyResult<()> {
     let mod_v1 = PyModule::new(py, "v1")?;
     m.add_submodule(&mod_v1)?;
     v1::init_module(&mod_v1, format!("{name}.v1").as_str())?;
+
+    let mod_v2 = PyModule::new(py, "v2")?;
+    m.add_submodule(&mod_v2)?;
+    v2::init_module(&mod_v2, format!("{name}.v2").as_str())?;
 
     m.add_class::<Structure>()?;
 
