@@ -14,8 +14,6 @@
 // limitations under the License.
 
 pub(super) mod extension;
-pub(super) mod pack;
-pub(super) mod unpack;
 
 use pyo3::prelude::*;
 use pyo3::types::{PyByteArray, PyBytes, PyDict};
@@ -23,55 +21,32 @@ use pyo3::wrap_pyfunction;
 
 use crate::register_package;
 
-const TINY_STRING: u8 = 0x80;
-const TINY_LIST: u8 = 0x90;
-const TINY_MAP: u8 = 0xA0;
-const TINY_STRUCT: u8 = 0xB0;
-const NULL: u8 = 0xC0;
-const FALSE: u8 = 0xC2;
-const TRUE: u8 = 0xC3;
-const INT_8: u8 = 0xC8;
-const INT_16: u8 = 0xC9;
-const INT_32: u8 = 0xCA;
-const INT_64: u8 = 0xCB;
-const FLOAT_64: u8 = 0xC1;
-const STRING_8: u8 = 0xD0;
-const STRING_16: u8 = 0xD1;
-const STRING_32: u8 = 0xD2;
-const LIST_8: u8 = 0xD4;
-const LIST_16: u8 = 0xD5;
-const LIST_32: u8 = 0xD6;
-const MAP_8: u8 = 0xD8;
-const MAP_16: u8 = 0xD9;
-const MAP_32: u8 = 0xDA;
-const BYTES_8: u8 = 0xCC;
-const BYTES_16: u8 = 0xCD;
-const BYTES_32: u8 = 0xCE;
+const UUID: u8 = 0xE0;
 
 #[pyfunction]
-#[pyo3(name = "pack", signature = (value, dehydration_hooks=None))]
-fn pack_fn<'py>(
+#[pyo3(signature = (value, dehydration_hooks=None))]
+fn pack<'py>(
     value: &Bound<'py, PyAny>,
     dehydration_hooks: Option<&Bound<'py, PyAny>>,
 ) -> PyResult<Bound<'py, PyBytes>> {
-    pack::pack::<extension::PackStreamV1BaseExt>(value, dehydration_hooks)
+    super::v1::pack::pack::<extension::PackStreamV2Ext>(value, dehydration_hooks)
 }
 
 #[pyfunction]
-#[pyo3(name = "unpack", signature = (bytes, idx, hydration_hooks=None))]
-fn unpack_fn(
+#[pyo3(signature = (bytes, idx, hydration_hooks=None))]
+fn unpack(
     bytes: Bound<PyByteArray>,
     idx: usize,
     hydration_hooks: Option<Bound<PyDict>>,
 ) -> PyResult<(Py<PyAny>, usize)> {
-    unpack::unpack::<extension::PackStreamV1BaseExt>(bytes, idx, hydration_hooks)
+    super::v1::unpack::unpack::<extension::PackStreamV2Ext>(bytes, idx, hydration_hooks)
 }
 
 pub(crate) fn init_module(m: &Bound<PyModule>, name: &str) -> PyResult<()> {
     register_package(m, name)?;
 
-    m.add_function(wrap_pyfunction!(unpack_fn, m)?)?;
-    m.add_function(wrap_pyfunction!(pack_fn, m)?)?;
+    m.add_function(wrap_pyfunction!(unpack, m)?)?;
+    m.add_function(wrap_pyfunction!(pack, m)?)?;
 
     Ok(())
 }

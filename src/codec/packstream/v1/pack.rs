@@ -14,6 +14,7 @@
 // limitations under the License.
 
 use std::borrow::Cow;
+use std::marker::PhantomData;
 use std::sync::OnceLock;
 
 use pyo3::exceptions::{PyOverflowError, PyTypeError, PyValueError};
@@ -24,6 +25,7 @@ use pyo3::types::{PyByteArray, PyBytes, PyDict, PyString, PyTuple, PyType};
 use pyo3::{intern, IntoPyObjectExt};
 
 use super::super::Structure;
+use super::extension::PackStreamV1Ext;
 use super::{
     BYTES_16, BYTES_32, BYTES_8, FALSE, FLOAT_64, INT_16, INT_32, INT_64, INT_8, LIST_16, LIST_32,
     LIST_8, MAP_16, MAP_32, MAP_8, NULL, STRING_16, STRING_32, STRING_8, TINY_LIST, TINY_MAP,
@@ -130,46 +132,42 @@ impl TypeMappings {
     }
 }
 
-static TYPE_MAPPINGS: OnceLock<PyResult<TypeMappings>> = OnceLock::new();
+fn get_type_mappings<E: PackStreamV1Ext>(py: Python<'_>) -> PyResult<&'static TypeMappings> {
+    static TYPE_MAPPINGS: OnceLock<PyResult<TypeMappings>> = OnceLock::new();
 
-fn get_type_mappings(py: Python<'_>) -> PyResult<&'static TypeMappings> {
     let mappings = TYPE_MAPPINGS.get_or_init_py_attached(py, || {
         let locals = PyDict::new(py);
-        py.run(
-            c"from neo4j._codec.packstream.v1.types import *",
-            None,
-            Some(&locals),
-        )?;
+        py.run(E::type_mapping_import(), None, Some(&locals))?;
         TypeMappings::new(&locals)
     });
     mappings.as_ref().map_err(|e| e.clone_ref(py))
 }
 
-#[pyfunction]
-#[pyo3(signature = (value, dehydration_hooks=None))]
-pub(super) fn pack<'py>(
+pub(crate) fn pack<'py, E: PackStreamV1Ext>(
     value: &Bound<'py, PyAny>,
     dehydration_hooks: Option<&Bound<'py, PyAny>>,
 ) -> PyResult<Bound<'py, PyBytes>> {
     let py = value.py();
-    let type_mappings = get_type_mappings(py)?;
-    let mut encoder = PackStreamEncoder::new(dehydration_hooks, type_mappings);
+    let type_mappings = get_type_mappings::<E>(py)?;
+    let mut encoder = PackStreamEncoder::<E>::new(dehydration_hooks, type_mappings);
     encoder.write(value)?;
     Ok(PyBytes::new(py, &encoder.buffer))
 }
 
-struct PackStreamEncoder<'a> {
+pub(crate) struct PackStreamEncoder<'a, E: PackStreamV1Ext> {
+    ext: PhantomData<E>,
     dehydration_hooks: Option<&'a Bound<'a, PyAny>>,
     type_mappings: &'a TypeMappings,
     buffer: Vec<u8>,
 }
 
-impl<'a> PackStreamEncoder<'a> {
+impl<'a, E: PackStreamV1Ext> PackStreamEncoder<'a, E> {
     fn new(
         dehydration_hooks: Option<&'a Bound<'a, PyAny>>,
         type_mappings: &'a TypeMappings,
     ) -> Self {
         Self {
+            ext: PhantomData,
             dehydration_hooks,
             type_mappings,
             buffer: Vec::default(),
@@ -240,6 +238,10 @@ impl<'a> PackStreamEncoder<'a> {
                 self.write_string(key)?;
                 self.write(&value)
             });
+        }
+
+        if E::pack_ext(value, self)? {
+            return Ok(());
         }
 
         if let Ok(value) = value.extract::<Bound<Structure>>() {
@@ -420,5 +422,10 @@ impl<'a> PackStreamEncoder<'a> {
         }
         self.buffer.extend(&[TINY_STRUCT + size, tag]);
         Ok(())
+    }
+
+    #[inline]
+    pub(crate) fn write_raw<'b, I: IntoIterator<Item = &'b u8>>(&mut self, iter: I) {
+        self.buffer.extend(iter);
     }
 }
