@@ -175,6 +175,31 @@ Changelog
 [#44]: https://github.com/neo4j/neo4j-python-driver-rust-ext/pull/44
 
 
+## [5.28.5.0](https://github.com/neo4j/neo4j-python-driver-rust-ext/tree/5.28.5.0) (2026-08-28)
+***
+### **⭐️ New Features**
+* Target driver version 5.28.5 ([#104]).
+
+[#104]: https://github.com/neo4j/neo4j-python-driver-rust-ext/pull/104
+
+### **👏️ Improvements**
+* Update `PyO3` from `0.28.8` to `0.29.2` ([#94], [#102]).
+  * This fixes [GHSA-36hh-v3qg-5jq4](https://github.com/advisories/GHSA-36hh-v3qg-5jq4)
+    and [GHSA-chgr-c6px-7xpp](https://github.com/advisories/GHSA-chgr-c6px-7xpp),
+    even though this project is not believed to be vulnerable to these issues.
+  * Note that `PyO3` version `0.29.0` dropped support for Python 3.7.
+    Therefore, this dependency bump is only available on Python 3.8 and newer.
+
+[#94]: https://github.com/neo4j/neo4j-python-driver-rust-ext/pull/94
+[#102]: https://github.com/neo4j/neo4j-python-driver-rust-ext/pull/102
+
+### **🧑️‍💻️ Development**
+* Dropped support for Python 3.7 as development environment in the process of updating `PyO3` from `0.28.8` to `0.29.0` ([#94]).
+  The extensions still build against Python 3.7, and Python 3.7 is still part of the test matrix.
+
+[#94]: https://github.com/neo4j/neo4j-python-driver-rust-ext/pull/94
+
+
 ## [5.28.4.0](https://github.com/neo4j/neo4j-python-driver-rust-ext/tree/5.28.4.0) (2026-05-04)
 ***
 ### **⭐️ New Features**
