@@ -5,6 +5,32 @@ Changelog
 
 <!-- towncrier release notes start -->
 
+## [6.3.0.0](https://github.com/neo4j/neo4j-python-driver-rust-ext/tree/6.3.0.0) (2026-08-28)
+***
+### **⭐️ New Features**
+* Add support for PackStream v2 ([#86]).  
+  This is required to support Bolt 6.1 which introduces `UUID`s.
+* Target driver version 6.3.0 ([#103]).
+
+[#86]: https://github.com/neo4j/neo4j-python-driver-rust-ext/pull/86
+[#103]: https://github.com/neo4j/neo4j-python-driver-rust-ext/pull/103
+
+### **👏️ Improvements**
+* Update `PyO3` from `0.28.8` to `0.29.2` ([#95], [#101]).
+  * This fixes [GHSA-36hh-v3qg-5jq4](https://github.com/advisories/GHSA-36hh-v3qg-5jq4)
+    and [GHSA-chgr-c6px-7xpp](https://github.com/advisories/GHSA-chgr-c6px-7xpp),
+    even though this project is not believed to be vulnerable to these issues.
+  * ⚠️ This drops support for the (experimental) free-threaded build of Python 3.13.
+
+[#95]: https://github.com/neo4j/neo4j-python-driver-rust-ext/pull/95
+[#101]: https://github.com/neo4j/neo4j-python-driver-rust-ext/pull/101
+
+### **🧑️‍💻️ Development**
+* Up the linter level to pedantic ([#87]).
+
+[#87]: https://github.com/neo4j/neo4j-python-driver-rust-ext/pull/87
+
+
 ## [6.2.0.0](https://github.com/neo4j/neo4j-python-driver-rust-ext/tree/6.2.0.0) (2026-05-04)
 ***
 ### **⭐️ New Features**
