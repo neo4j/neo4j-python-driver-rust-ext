@@ -29,7 +29,7 @@ from ..vector.from_driver.test_vector import (
 @pytest.mark.parametrize("length", (1, 100_000))
 def test_bench_swap_endian(benchmark, mocker, ext, type_size, length):
     data = bytes(i % 256 for i in range(8 * length))
-    _mock_mask_extensions(mocker, ext)
+    _mock_mask_extensions(ext, mocker)
     rounds = max(min(1_000_000 // length, 100_000), 100)
 
     benchmark.pedantic(lambda: _swap_endian(type_size, data), rounds=rounds)
