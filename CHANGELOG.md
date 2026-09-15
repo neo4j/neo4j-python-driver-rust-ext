@@ -219,6 +219,19 @@ Changelog
 [#44]: https://github.com/neo4j/neo4j-python-driver-rust-ext/pull/44
 
 
+## [5.28.6.0](https://github.com/neo4j/neo4j-python-driver-rust-ext/tree/5.28.6.0) (2026-09-15)
+***
+### **⭐️ New Features**
+* Target driver version 5.28.6 ([#111]).
+
+[#111]: https://github.com/neo4j/neo4j-python-driver-rust-ext/pull/111
+
+### **👏️ Improvements**
+* Update `maturin` (Python package builder) from `~= 1.13.1` to `== 1.15.0` ([#108]).
+
+[#108]: https://github.com/neo4j/neo4j-python-driver-rust-ext/pull/108
+
+
 ## [5.28.5.0](https://github.com/neo4j/neo4j-python-driver-rust-ext/tree/5.28.5.0) (2026-08-28)
 ***
 ### **⭐️ New Features**
