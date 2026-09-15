@@ -61,7 +61,7 @@ pandas = ["neo4j[pandas]"]
 pyarrow = ["neo4j[pyarrow]"]
 
 [build-system]
-requires = ["maturin ~= 1.13.1"]
+requires = ["maturin == 1.15.0"]
 build-backend = "neo4j_rust_ext_build"
 backend-path = ["build_backend"]
 
