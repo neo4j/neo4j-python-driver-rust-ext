@@ -14,8 +14,18 @@
 # limitations under the License.
 
 
-from _common import run_python
+from _common import (
+    get_tox_factor_args,
+    run_python,
+)
 
 
 if __name__ == "__main__":
-    run_python(["-m", "tox", "-vv", "-f", "test"])
+    run_python(
+        [
+            "-m",
+            "tox",
+            "-vv",
+            *get_tox_factor_args("test"),
+        ]
+    )
