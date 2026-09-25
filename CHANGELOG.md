@@ -77,7 +77,7 @@ Changelog
 ## [6.1.0.0](https://github.com/neo4j/neo4j-python-driver-rust-ext/tree/6.1.0.0) (2026-01-12)
 ***
 ### **⭐️ New Features**
-* Add support for Python 3.14  ([#75]).
+* Add support for Python 3.14 ([#75]).
 * Target driver version 6.1.0 ([#81]).
 
 [#75]: https://github.com/neo4j/neo4j-python-driver-rust-ext/pull/75
@@ -202,7 +202,7 @@ Changelog
 ### **📦️ Packaging**
 * Update licensing meta data to be PEP 639 compliant ([#38]).
   * Update `maturin` (Python package builder) from `~= 1.8.3` to `~= 1.9.0`.
-* ⚠️ Change licensing from "Apache-2.0" to "Apache-2.0 AND MIT"  ([#40]).
+* ⚠️ Change licensing from "Apache-2.0" to "Apache-2.0 AND MIT" ([#40]).
 * Update dependencies ([#46]).
   * `PyO3`: `0.24.2` -> `0.25.1`
   * `maturin`: `1.9.0` -> `1.9.1`
@@ -327,7 +327,7 @@ Changelog
 [#53]: https://github.com/neo4j/neo4j-python-driver-rust-ext/pull/53
 
 ### **📦️ Packaging**
-* ⚠️ Change licensing from "Apache-2.0" to "Apache-2.0 AND MIT"  ([#43]).
+* ⚠️ Change licensing from "Apache-2.0" to "Apache-2.0 AND MIT" ([#43]).
 * Update licensing meta data to be PEP 639 compliant ([#41]).
   * Update `maturin` (Python package builder) from `~= 1.8.3` to `~= 1.9.0`.
 * Update `maturin` (Python package builder) from `~= 1.9.0` to `~= 1.9.1` ([#54]).
