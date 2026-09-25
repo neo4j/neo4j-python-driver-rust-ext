@@ -23,6 +23,9 @@ _TRUE_ENV_VALS = {"1", "y", "yes", "true", "t", "on"}
 
 
 TEST_BACKEND_VERSION = os.getenv("TEST_BACKEND_VERSION", "python")
+# space-separated list of tox factor filters to apply.
+# Example: `f1-f2 f3` to add `-f f1-f2 -f f3` to each tox invocation.
+TEST_TOX_FACTORS = os.getenv("TEST_TOX_FACTORS", "")
 TEST_LOCAL_DRIVER = (
     os.environ.get("TEST_LOCAL_DRIVER", "").lower() in _TRUE_ENV_VALS
 )
@@ -44,3 +47,11 @@ def run(args, env=None, **kwargs):
 def run_python(args, env=None, **kwargs):
     cmd = [TEST_BACKEND_VERSION, "-u", *args]
     run(cmd, env=env, **kwargs)
+
+
+def get_tox_factor_args(base_factor: str):
+    return tuple(
+        arg
+        for factor in TEST_TOX_FACTORS.split()
+        for arg in ("-f", f"{factor}-{base_factor}")
+    ) or ("-f", base_factor)
