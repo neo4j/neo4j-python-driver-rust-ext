@@ -15,6 +15,7 @@
 
 
 from _common import (
+    get_tox_factor_args,
     run_python,
     TEST_LOCAL_DRIVER,
 )
@@ -22,4 +23,11 @@ from _common import (
 
 if __name__ == "__main__":
     driver_env = "devdriver" if TEST_LOCAL_DRIVER else "releasedriver"
-    run_python(["-m", "tox", "-vv", "-f", driver_env, "test"])
+    run_python(
+        [
+            "-m",
+            "tox",
+            "-vv",
+            *get_tox_factor_args(f"test-{driver_env}"),
+        ]
+    )
