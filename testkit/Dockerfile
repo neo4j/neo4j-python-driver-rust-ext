@@ -77,5 +77,5 @@ ENV PYARROW_WITH_CUDA=OFF
 ENV PYARROW_WITH_GANDIVA=OFF
 
 # Install Rust toolchain
-RUN curl https://sh.rustup.rs -sSf | bash -s -- -y
+RUN curl https://sh.rustup.rs -sSf | bash -s -- -y --profile minimal
 ENV PATH="/root/.cargo/bin:${PATH}"
