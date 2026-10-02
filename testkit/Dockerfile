@@ -63,14 +63,15 @@ RUN for version in $PYTHON_VERSIONS; do \
 # [bump-pyarrow] search tag for when pyarrow supports Python 3.15
 # Installing pyarrow lib until pre-built wheel for Python 3.15 exists
 # https://github.com/apache/arrow/issues/48172
-RUN apt update && \
-    apt install -y -V wget lsb-release cmake gcc && \
+RUN if [[ ! " ${PYTHON_VERSIONS} " =~ [[:space:]]3.15t?[[:space:]] ]]; then exit 0; fi && \
+    apt-get update && \
+    apt-get install -y -V wget lsb-release cmake gcc && \
     distro_name=$(lsb_release --id --short | tr 'A-Z' 'a-z') && \
     code_name=$(lsb_release --codename --short) && \
     wget https://apache.jfrog.io/artifactory/arrow/${distro_name}/apache-arrow-apt-source-latest-${code_name}.deb && \
-    apt install -y -V ./apache-arrow-apt-source-latest-${code_name}.deb && \
-    apt update && \
-    apt install -y -V libarrow-dev libarrow-dataset-dev libarrow-flight-dev libarrow-acero-dev && \
+    apt-get install -y -V ./apache-arrow-apt-source-latest-${code_name}.deb && \
+    apt-get update && \
+    apt-get install -y -V libarrow-dev libarrow-dataset-dev libarrow-flight-dev libarrow-acero-dev && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* ./apache-arrow-apt-source-latest-${code_name}.deb
 ENV PYARROW_WITH_CUDA=OFF
