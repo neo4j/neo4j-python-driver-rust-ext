@@ -42,9 +42,10 @@ ENV PYENV_ROOT=/.pyenv
 ENV PATH="$PYENV_ROOT/shims:$PYENV_ROOT/bin:$PATH"
 
 # Setup python version
-ENV PYTHON_VERSIONS="3.13 3.12 3.11 3.10 3.9 3.8 3.7 3.13t"
+ARG PYTHON_VERSIONS="3.15 3.14 3.13 3.12 3.11 3.10 3.15t 3.14t"
+ARG PYTHON_INSTALL_VERSIONS=$PYTHON_VERSIONS
 
-RUN for version in $PYTHON_VERSIONS; do \
+RUN for version in $PYTHON_INSTALL_VERSIONS; do \
         pyenv install $version; \
     done
 RUN pyenv rehash
