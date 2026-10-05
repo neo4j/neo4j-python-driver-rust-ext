@@ -21,7 +21,6 @@ All other build backend functions are delegated to maturin.
 
 import os
 import sys
-import sysconfig
 
 import maturin
 
@@ -29,30 +28,15 @@ import maturin
 _PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 _PY37_DIR = os.path.join(_PROJECT_ROOT, "cargo_py37")
 _PY37_MANIFEST = os.path.join(_PY37_DIR, "Cargo.toml")
-_PY313T_DIR = os.path.join(_PROJECT_ROOT, "cargo_py313t")
-_PY313T_MANIFEST = os.path.join(_PY313T_DIR, "Cargo.toml")
-
-
-def _is_gil_enabled():
-    return sysconfig.get_config_var("Py_GIL_DISABLED") == 1
 
 
 def _inject_legacy_manifest(config_settings):
-    extra_build_args = None
-
-    if sys.version_info[:2] == (3, 7):
-        extra_build_args = f"--manifest-path {_PY37_MANIFEST}"
-    elif sys.version_info[:2] == (3, 13) and _is_gil_enabled():
-        extra_build_args = f"--manifest-path {_PY313T_MANIFEST}"
-
+    if sys.version_info >= (3, 8):
+        return config_settings
     cs = dict(config_settings or {})
-    if extra_build_args is not None:
-        existing = cs.get("build-args", "")
-        if existing:
-            cs["build-args"] = f"{existing} {extra_build_args}".strip()
-        else:
-            cs["build-args"] = extra_build_args
-
+    extra = f"--manifest-path {_PY37_MANIFEST}"
+    existing = cs.get("build-args", "")
+    cs["build-args"] = f"{existing} {extra}".strip() if existing else extra
     return cs
 
 

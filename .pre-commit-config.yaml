@@ -45,14 +45,6 @@ repos:
         pass_filenames: false
   - repo: local
     hooks:
-      - id: cargo-clippy-py313t
-        name: cargo clippy (Python 3.13t)
-        entry: cargo clippy --manifest-path cargo_py313t/Cargo.toml --all-features --tests --locked -- -D warnings
-        language: system
-        types: [rust]
-        pass_filenames: false
-  - repo: local
-    hooks:
       - id: isort
         name: isort
         entry: isort
