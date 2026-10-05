@@ -6,21 +6,6 @@ Changelog
 
 <!-- towncrier release notes start -->
 
-## [5.28.7.0](https://github.com/neo4j/neo4j-python-driver-rust-ext/tree/5.28.7.0) (2026-10-05)
-***
-### **⭐️ New Features**
-* Target driver version 5.28.7 ([#121]).
-
-[#121]: https://github.com/neo4j/neo4j-python-driver-rust-ext/pull/121
-
-### **👏️ Improvements**
-* Update dependencies ([#120]).
-    * Update `PyO3` from `0.29.2` to `0.29.3` (only available for Python 3.8+).
-    * Update development dependencies.
-
-[#120]: https://github.com/neo4j/neo4j-python-driver-rust-ext/pull/120
-
-
 ## [5.28.6.0](https://github.com/neo4j/neo4j-python-driver-rust-ext/tree/5.28.6.0) (2026-09-15)
 ***
 ### **⭐️ New Features**
