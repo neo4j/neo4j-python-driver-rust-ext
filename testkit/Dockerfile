@@ -42,7 +42,7 @@ ENV PATH="$PYENV_ROOT/shims:$PYENV_ROOT/bin:$PATH"
 
 # Install all supported Python versions
 ARG PYTHON_VERSIONS="3.15 3.14 3.13 3.12 3.11 3.10 3.15t 3.14t"
-ARG PYTHON_INSTALL_VERSIONS="3.15.0rc2 3.14 3.13 3.12 3.11 3.10 3.15t 3.14t"
+ARG PYTHON_INSTALL_VERSIONS="3.15.0rc3 3.14 3.13 3.12 3.11 3.10 3.15t 3.14t"
 
 RUN for version in $PYTHON_INSTALL_VERSIONS; do \
         pyenv install $version; \
