@@ -75,21 +75,21 @@ dev = [
     {include-group = "packaging"},
 ]
 tox = [
-    "tox >= 4.26.0",
+    "tox >= 4.64.7",
 ]
 precommit = [
-    "pre-commit >= 4.2.0",
-    "isort >= 6.0.1",
+    "pre-commit >= 4.6.2",
+    "isort >= 9.0.2",
 ]
 test = [
-    "pytest >= 8.3.5",
-    "pytest-benchmark >= 5.1.0",
-    "pytest-mock >= 3.14.1",
+    "pytest >= 9.1.1",
+    "pytest-benchmark >= 5.3.0",
+    "pytest-mock >= 3.16.0",
 ]
 packaging = [
     "build",
-    "maturin ~= 1.13.1",
-    "towncrier >= 24.8.0",
+    "maturin == 1.15.0",
+    "towncrier >= 26.9.0",
 ]
 
 # single dependencies and other include-groups (not really meant to be installed as a group, but to avoid duplication)
