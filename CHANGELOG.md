@@ -219,6 +219,27 @@ Changelog
 [#44]: https://github.com/neo4j/neo4j-python-driver-rust-ext/pull/44
 
 
+## [5.28.7.0](https://github.com/neo4j/neo4j-python-driver-rust-ext/tree/5.28.7.0) (2026-10-06)
+***
+### **⭐️ New Features**
+* Target driver version 5.28.7 ([#121]).
+
+[#121]: https://github.com/neo4j/neo4j-python-driver-rust-ext/pull/121
+
+### **👏️ Improvements**
+* Update dependencies ([#120]).
+    * Update `PyO3` from `0.29.2` to `0.29.3` (only available for non-free-threading CPython 3.8+).
+    * Update development dependencies.
+
+[#120]: https://github.com/neo4j/neo4j-python-driver-rust-ext/pull/120
+
+### **🧹️ Clean-up**
+* ⚠️ Drop (CI) support for CPython 3.13t ([#122]).  
+  CPython itself (followed by the ecosystem) declared that free-threaded support starts version 3.14.
+
+[#122]: https://github.com/neo4j/neo4j-python-driver-rust-ext/pull/122
+
+
 ## [5.28.6.0](https://github.com/neo4j/neo4j-python-driver-rust-ext/tree/5.28.6.0) (2026-09-15)
 ***
 ### **⭐️ New Features**
