@@ -13,8 +13,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use std::ffi::CStr;
-
 use pyo3::intern;
 use pyo3::prelude::*;
 use pyo3::IntoPyObjectExt;
@@ -35,11 +33,6 @@ impl PackStreamV2Ext {
 }
 
 impl PackStreamV1Ext for PackStreamV2Ext {
-    #[inline]
-    fn type_mapping_import() -> &'static CStr {
-        c"from neo4j._codec.packstream.v2.types import *"
-    }
-
     #[inline]
     fn pack_ext(
         value: &'_ Bound<PyAny>,

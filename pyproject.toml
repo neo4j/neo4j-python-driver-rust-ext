@@ -26,7 +26,7 @@ authors = [
     {name = "Neo4j, Inc.", email = "drivers@neo4j.com"},
 ]
 dependencies = [
-    "neo4j == 6.3.1"
+    "neo4j == 6.4.0"
 ]
 requires-python = ">=3.10"
 keywords = ["neo4j", "graph", "database"]
@@ -44,7 +44,7 @@ classifiers = [
     "Topic :: Database",
     "Topic :: Software Development",
 ]
-version = "6.3.1.0"
+version = "6.4.0.0"
 
 [project.urls]
 Homepage = "https://neo4j.com/"
@@ -82,9 +82,12 @@ precommit = [
     "isort >= 9.0.2",
 ]
 test = [
+    "mock >= 5.2.0",
     "pytest >= 9.1.1",
+    "pytest-asyncio >= 1.4.0",
     "pytest-benchmark >= 5.3.0",
     "pytest-mock >= 3.16.0",
+    "pytest-timeout >= 2.4.0",
 ]
 packaging = [
     "build",
@@ -94,7 +97,7 @@ packaging = [
 
 # single dependencies and other include-groups (not really meant to be installed as a group, but to avoid duplication)
 dep-project-dependencies = [
-    "neo4j[numpy,pandas,pyarrow] == 6.3.1",
+    "neo4j[numpy,pandas,pyarrow] == 6.4.0",
 ]
 
 [tool.maturin]
@@ -115,7 +118,7 @@ exclude = [
 
 [tool.towncrier]
 directory = "changelog.d"
-version = "6.3.1.0"
+version = "6.4.0.0"
 filename = "CHANGELOG.md"
 title_format = "## [{version}](https://github.com/neo4j/neo4j-python-driver-rust-ext/tree/{version}) ({project_date})\n***"
 issue_format = "[#{issue}]: https://github.com/neo4j/neo4j-python-driver-rust-ext/pull/{issue}"

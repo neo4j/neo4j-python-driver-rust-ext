@@ -52,6 +52,7 @@ def test_pack_injection_works(packer_with_buffer):
 
     dehydration_hooks = DehydrationHooks(
         exact_types={TestClass: raise_test_exception},
+        exact_values={},
         subtypes={},
     )
     test_object = TestClass()
