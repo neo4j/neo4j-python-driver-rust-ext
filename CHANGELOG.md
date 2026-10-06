@@ -31,8 +31,9 @@ Changelog
   * This fixes [GHSA-36hh-v3qg-5jq4](https://github.com/advisories/GHSA-36hh-v3qg-5jq4)
     and [GHSA-chgr-c6px-7xpp](https://github.com/advisories/GHSA-chgr-c6px-7xpp),
     even though this project is not believed to be vulnerable to these issues.
-  * Note that `PyO3` version `0.29.0` dropped support for Python 3.7.
-    Therefore, this dependency bump is only available on Python 3.8 and newer.
+  * Note that `PyO3` version `0.29.0` dropped support for Python 3.7 and 3.13t.
+    Therefore, this dependency bump is only available on Python 3.8 and newer
+    and on non-free-threading CPython builds.
 
 [#94]: https://github.com/neo4j/neo4j-python-driver-rust-ext/pull/94
 [#102]: https://github.com/neo4j/neo4j-python-driver-rust-ext/pull/102
