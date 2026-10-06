@@ -13,8 +13,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use std::ffi::CStr;
-
 use pyo3::exceptions::PyValueError;
 use pyo3::prelude::*;
 
@@ -23,7 +21,6 @@ use super::pack::PackStreamEncoder;
 use super::unpack::PackStreamDecoder;
 
 pub(crate) trait PackStreamV1Ext: Sized {
-    fn type_mapping_import() -> &'static CStr;
     fn pack_ext(
         value: &'_ Bound<PyAny>,
         encoder: &mut PackStreamEncoder<'_, Self>,
@@ -35,11 +32,6 @@ pub(crate) trait PackStreamV1Ext: Sized {
 pub(crate) struct PackStreamV1BaseExt {}
 
 impl PackStreamV1Ext for PackStreamV1BaseExt {
-    #[inline]
-    fn type_mapping_import() -> &'static CStr {
-        c"from neo4j._codec.packstream.v1.types import *"
-    }
-
     #[inline]
     fn pack_ext(value: &'_ Bound<PyAny>, _: &mut PackStreamEncoder<'_, Self>) -> PyResult<bool> {
         let py = value.py();

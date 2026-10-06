@@ -137,7 +137,7 @@ fn get_type_mappings<E: PackStreamV1Ext>(py: Python<'_>) -> PyResult<&'static Ty
 
     let mappings = TYPE_MAPPINGS.get_or_init_py_attached(py, || {
         let locals = PyDict::new(py);
-        py.run(E::type_mapping_import(), None, Some(&locals))?;
+        py.run(c"from neo4j._codec._types import *", None, Some(&locals))?;
         TypeMappings::new(&locals)
     });
     mappings.as_ref().map_err(|e| e.clone_ref(py))

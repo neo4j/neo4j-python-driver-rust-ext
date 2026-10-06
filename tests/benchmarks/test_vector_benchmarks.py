@@ -18,10 +18,12 @@ from __future__ import annotations
 
 import pytest
 
-from ..vector.from_driver.test_vector import (
-    _mock_mask_extensions,
-    _swap_endian,
-)
+from .._driver import load_driver_test_module
+
+
+driver_test_vector = load_driver_test_module("unit.common.vector.test_vector")
+_mock_mask_extensions = driver_test_vector._mock_mask_extensions
+_swap_endian = driver_test_vector._swap_endian
 
 
 @pytest.mark.parametrize("ext", ("numpy", "rust", "python"))
@@ -29,7 +31,7 @@ from ..vector.from_driver.test_vector import (
 @pytest.mark.parametrize("length", (1, 100_000))
 def test_bench_swap_endian(benchmark, mocker, ext, type_size, length):
     data = bytes(i % 256 for i in range(8 * length))
-    _mock_mask_extensions(ext, mocker)
+    driver_test_vector._mock_mask_extensions(ext, mocker)
     rounds = max(min(1_000_000 // length, 100_000), 100)
 
     benchmark.pedantic(lambda: _swap_endian(type_size, data), rounds=rounds)
