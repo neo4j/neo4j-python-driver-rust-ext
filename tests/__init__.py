@@ -12,3 +12,14 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
+
+def _add_driver_tests_to_path():
+    import sys
+    from pathlib import Path
+
+    sys.path.append(str(Path(__file__).parents[2] / "driver"))
+
+
+_add_driver_tests_to_path()
+del _add_driver_tests_to_path

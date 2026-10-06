@@ -29,5 +29,12 @@ if __name__ == "__main__":
             "tox",
             "-vv",
             *get_tox_factor_args(f"test-{driver_env}"),
+            "--parallel",
+            "--parallel-no-spinner",
+            "--",
+            "-vv",
+            "--showlocals",
+            "--tb=long",
+            "--log-level=DEBUG",
         ]
     )
