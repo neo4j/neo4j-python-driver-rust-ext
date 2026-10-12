@@ -58,6 +58,7 @@ Discord = "https://discord.com/invite/neo4j"
 numpy = ["neo4j[numpy]"]
 pandas = ["neo4j[pandas]"]
 pyarrow = ["neo4j[pyarrow]"]
+http = ["neo4j[http] == 6.4.0"]
 
 [build-system]
 requires = ["maturin == 1.15.0"]
