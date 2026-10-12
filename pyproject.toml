@@ -56,9 +56,9 @@ Forum = "https://community.neo4j.com/c/drivers-stacks/python/"
 Discord = "https://discord.com/invite/neo4j"
 
 [project.optional-dependencies]
-numpy = ["neo4j[numpy]"]
-pandas = ["neo4j[pandas]"]
-pyarrow = ["neo4j[pyarrow]"]
+numpy = ["neo4j[numpy] == 5.28.7"]
+pandas = ["neo4j[pandas] == 5.28.7"]
+pyarrow = ["neo4j[pyarrow] == 5.28.7"]
 
 [build-system]
 requires = ["maturin == 1.15.0"]
