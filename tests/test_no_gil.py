@@ -17,6 +17,7 @@
 from __future__ import annotations
 
 import importlib
+import multiprocessing as mp
 import sys
 import sysconfig
 
@@ -40,7 +41,17 @@ IS_NO_GIL_BUILD = sysconfig.get_config_var("Py_GIL_DISABLED") == 1
         "neo4j._rust",
     ),
 )
-def test_gil_remains_disabled(name):
+def test_gil_remains_disabled(name: str) -> None:
+    # Running the test in a multiprocessing process to ensure we observe the
+    # GIL unaffected by any packages already loaded (such as 3rd party
+    # dependencies)
+    p = mp.Process(target=_assert_gil_disabled_after_import, args=(name,))
+    p.start()
+    p.join()
+    assert p.exitcode == 0
+
+
+def _assert_gil_disabled_after_import(name: str):
     # WHEN: module is loaded
     _ = importlib.import_module(name)
 

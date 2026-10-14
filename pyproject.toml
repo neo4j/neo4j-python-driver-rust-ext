@@ -58,6 +58,7 @@ Discord = "https://discord.com/invite/neo4j"
 numpy = ["neo4j[numpy] == 6.4.0"]
 pandas = ["neo4j[pandas] == 6.4.0"]
 pyarrow = ["neo4j[pyarrow] == 6.4.0"]
+http = ["neo4j[http] == 6.4.0"]
 
 [build-system]
 requires = ["maturin == 1.15.0"]
@@ -97,7 +98,7 @@ packaging = [
 
 # single dependencies and other include-groups (not really meant to be installed as a group, but to avoid duplication)
 dep-project-dependencies = [
-    "neo4j[numpy,pandas,pyarrow] == 6.4.0",
+    "neo4j[numpy,pandas,pyarrow,http] == 6.4.0",
 ]
 
 [tool.maturin]
