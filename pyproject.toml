@@ -75,19 +75,16 @@ include = [
     { path = "cargo_py37/Cargo.*", format = ["sdist"] },
 ]
 exclude = [
-    ".editorconfig",
-    ".gitignore",
-    ".gitmodules",
-    ".pre-commit-config.yaml",
-    ".semgrepignore",
-    "bin/**/*",
-    "changelog.d/**",
-    "driver/**/*",
-    "test*/**/*",
-    "CONTRIBUTING.md",
-    "requirements*.txt",
-    "tox.ini",
-    { path = "neo4j/**/.keep", format = "wheel" }
+    "/.*",
+    "/.*/**/*",
+    "/bin/**/*",
+    "/changelog.d/**/*",
+    "/driver/**/*",
+    "/test*/**/*",
+    "/CONTRIBUTING.md",
+    "/requirements*.txt",
+    "/tox.ini",
+    { path = "/neo4j/**/.keep", format = "wheel" }
 ]
 
 [tool.towncrier]
