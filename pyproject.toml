@@ -104,17 +104,16 @@ dep-project-dependencies = [
 [tool.maturin]
 module-name = "neo4j._rust"
 exclude = [
-    "/.editorconfig",
-    ".gitignore",
-    ".gitmodules",
-    ".pre-commit-config.yaml",
-    "bin/**/*",
-    "driver/**/*",
-    "test*/**/*",
-    "CONTRIBUTING.md",
-    "requirements*.txt",
-    "tox.ini",
-    { path = "neo4j/**/.keep", format = "wheel" }
+    "/.*",
+    "/.*/**/*",
+    "/bin/**/*",
+    "/changelog.d/**/*",
+    "/driver/**/*",
+    "/test*/**/*",
+    "/CONTRIBUTING.md",
+    "/requirements*.txt",
+    "/tox.ini",
+    { path = "/neo4j/**/.keep", format = "wheel" }
 ]
 
 [tool.towncrier]
