@@ -5,6 +5,31 @@ Changelog
 
 <!-- towncrier release notes start -->
 
+## [6.4.1.0](https://github.com/neo4j/neo4j-python-driver-rust-ext/tree/6.4.1.0) (2026-10-15)
+***
+### **⭐️ New Features**
+* Target driver version 6.4.1 ([#133]).
+
+[#133]: https://github.com/neo4j/neo4j-python-driver-rust-ext/pull/133
+
+### **🔧️ Fixes**
+* Declare `neo4j` dependencies in a way that doesn't break when the upstream `neo4j` version has been yanked ([#126]).
+
+[#126]: https://github.com/neo4j/neo4j-python-driver-rust-ext/pull/126
+
+### **📦️ Packaging**
+* Add extra `http` to be forwarded as `neo4j[http]` dependency ([#128]).
+* Exclude `changelog.d` (containing changelog snippets) from the packaged releases ([#129]).
+
+[#128]: https://github.com/neo4j/neo4j-python-driver-rust-ext/pull/128
+[#129]: https://github.com/neo4j/neo4j-python-driver-rust-ext/pull/129
+
+### **🧑️‍💻️ Development**
+* Add testing without optional dependencies to the `tox` matrix ([#128]).
+
+[#128]: https://github.com/neo4j/neo4j-python-driver-rust-ext/pull/128
+
+
 ## [6.4.0.0](https://github.com/neo4j/neo4j-python-driver-rust-ext/tree/6.4.0.0) (2026-10-06)
 ***
 ### **⭐️ New Features**

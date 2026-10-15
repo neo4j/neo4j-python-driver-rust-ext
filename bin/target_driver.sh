@@ -11,10 +11,6 @@ git fetch origin
 git checkout "$version"
 git pull origin "$version"
 cd ..
-cp driver/tests/unit/common/codec/packstream/v1/test_packstream.py tests/codec/packstream/v1/from_driver/test_packstream.py
-cp driver/tests/unit/common/codec/packstream/v2/test_packstream.py tests/codec/packstream/v2/from_driver/test_packstream.py
-cp driver/tests/unit/common/codec/packstream/test_structure.py tests/codec/packstream/from_driver/test_structure.py
-cp -r driver/tests/unit/common/vector/* tests/vector/from_driver
 
 towncrier create -c "Target driver version ${version}<ISSUES_LIST>.
 " "+.feature.md"
