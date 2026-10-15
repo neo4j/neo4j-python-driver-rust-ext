@@ -26,7 +26,7 @@ authors = [
     {name = "Neo4j, Inc.", email = "drivers@neo4j.com"},
 ]
 dependencies = [
-    "neo4j == 5.28.7"
+    "neo4j == 5.28.8"
 ]
 requires-python = ">=3.7"
 keywords = ["neo4j", "graph", "database"]
@@ -45,7 +45,7 @@ classifiers = [
     "Topic :: Database",
     "Topic :: Software Development",
 ]
-version = "5.28.7.0"
+version = "5.28.8.0"
 
 [project.urls]
 Homepage = "https://neo4j.com/"
@@ -56,9 +56,9 @@ Forum = "https://community.neo4j.com/c/drivers-stacks/python/"
 Discord = "https://discord.com/invite/neo4j"
 
 [project.optional-dependencies]
-numpy = ["neo4j[numpy] == 5.28.7"]
-pandas = ["neo4j[pandas] == 5.28.7"]
-pyarrow = ["neo4j[pyarrow] == 5.28.7"]
+numpy = ["neo4j[numpy] == 5.28.8"]
+pandas = ["neo4j[pandas] == 5.28.8"]
+pyarrow = ["neo4j[pyarrow] == 5.28.8"]
 
 [build-system]
 requires = ["maturin == 1.15.0"]
@@ -89,7 +89,7 @@ exclude = [
 
 [tool.towncrier]
 directory = "changelog.d"
-version = "5.28.7.0"
+version = "5.28.8.0"
 filename = "CHANGELOG.md"
 title_format = "## [{version}](https://github.com/neo4j/neo4j-python-driver-rust-ext/tree/{version}) ({project_date})\n***"
 issue_format = "[#{issue}]: https://github.com/neo4j/neo4j-python-driver-rust-ext/pull/{issue}"
