@@ -236,6 +236,19 @@ Changelog
 [#44]: https://github.com/neo4j/neo4j-python-driver-rust-ext/pull/44
 
 
+## [5.28.8.0](https://github.com/neo4j/neo4j-python-driver-rust-ext/tree/5.28.8.0) (2026-10-15)
+***
+### **⭐️ New Features**
+* Target driver version 5.28.8 ([#132]).
+
+[#132]: https://github.com/neo4j/neo4j-python-driver-rust-ext/pull/132
+
+### **🔧️ Fixes**
+* Declare `neo4j` dependencies in a way that doesn't break when the upstream `neo4j` version has been yanked ([#127]).
+
+[#127]: https://github.com/neo4j/neo4j-python-driver-rust-ext/pull/127
+
+
 ## [5.28.7.0](https://github.com/neo4j/neo4j-python-driver-rust-ext/tree/5.28.7.0) (2026-10-06)
 ***
 ### **⭐️ New Features**
