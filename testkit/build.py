@@ -17,6 +17,7 @@
 from _common import (
     PIP_REQUIREMENT,
     run_python,
+    TEST_LOCAL_DRIVER,
 )
 
 
@@ -24,3 +25,5 @@ if __name__ == "__main__":
     run_python(["-m", "pip", "install", "-U", *PIP_REQUIREMENT])
     run_python(["-m", "pip", "install", "-Ur", "requirements-dev.txt"])
     run_python(["-m", "pip", "install", "."])
+    if TEST_LOCAL_DRIVER:
+        run_python(["-m", "pip", "install", "./driver", "--no-deps"])
