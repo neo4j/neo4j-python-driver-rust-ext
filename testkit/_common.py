@@ -29,6 +29,8 @@ TEST_TOX_FACTORS = os.getenv("TEST_TOX_FACTORS", "")
 TEST_LOCAL_DRIVER = (
     os.environ.get("TEST_LOCAL_DRIVER", "").lower() in _TRUE_ENV_VALS
 )
+# Pip version(s) not vulnerable to broken eMudhra root CAs
+PIP_REQUIREMENT = ("pip>=26.2.2",)
 
 
 def run(args, env=None, **kwargs):

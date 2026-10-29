@@ -15,13 +15,14 @@
 
 
 from _common import (
+    PIP_REQUIREMENT,
     run_python,
     TEST_LOCAL_DRIVER,
 )
 
 
 if __name__ == "__main__":
-    run_python(["-m", "pip", "install", "-U", "pip"])
+    run_python(["-m", "pip", "install", "-U", *PIP_REQUIREMENT])
     run_python(["-m", "pip", "install", "-U", "--group", "packaging"])
     run_python(["-m", "build", "."])
     run_python(
