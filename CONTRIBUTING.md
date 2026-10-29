@@ -54,7 +54,7 @@ Remember that many community members have become regular contributors and some a
 ## Specifically for this project:
 
 ### Setting up the Development Environment
- * Install Python 3.10+
+ * Install Python 3.11+
  * Install the requirements (needs pip 25.1+)
    ```bash
    # recommended to use a virtual environment
