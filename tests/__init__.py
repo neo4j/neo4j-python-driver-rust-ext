@@ -14,6 +14,7 @@
 # limitations under the License.
 
 
+# ruff: disable[non-empty-init-module]
 def _add_driver_tests_to_path():
     import sys
     from pathlib import Path
@@ -23,3 +24,4 @@ def _add_driver_tests_to_path():
 
 _add_driver_tests_to_path()
 del _add_driver_tests_to_path
+# ruff: enable[non-empty-init-module]
