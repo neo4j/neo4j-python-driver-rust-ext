@@ -148,6 +148,8 @@ line-length = 79
 extend-exclude = [
     "driver",
 ]
+# [ruff-rule-codes] search tag for switching from rule codes to rule names
+output-prefer-rule-codes = true
 
 [tool.ruff.lint]
 preview = true  # to get CPY lints
@@ -204,6 +206,16 @@ extend-ignore = [
     # needs fixing in ruff to work with typing.Protocol
     # https://github.com/astral-sh/ruff/issues/13307
     "FURB180",
+
+    # using `# ruff: ignore[the-rule-name]` instead of `# noqa: ABC123` is
+    #  * pro: easier to read
+    #  * pro: can be placed on its own line
+    #  * con: much longer
+    #  * con: tailored to ruff
+    #  * con: a very noise change now
+    # conclusion: not doing it now, but maybe in the future
+    # [ruff-rule-codes] search tag for switching from rule codes to rule names
+    "RUF105",
 ]
 select = [
     # ruff
