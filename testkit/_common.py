@@ -23,6 +23,8 @@ TEST_BACKEND_VERSION = os.getenv("TEST_BACKEND_VERSION", "python")
 # space-separated list of tox factor filters to apply.
 # Example: `f1-f2 f3` to add `-f f1-f2 -f f3` to each tox invocation.
 TEST_TOX_FACTORS = os.getenv("TEST_TOX_FACTORS", "")
+# Pip version(s) not vulnerable to broken eMudhra root CAs
+PIP_REQUIREMENT = ("pip>=26.2.2",)
 
 
 def run(args, env=None, **kwargs):
