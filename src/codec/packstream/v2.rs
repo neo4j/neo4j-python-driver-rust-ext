@@ -13,7 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-pub(super) mod extension;
+pub(super) mod _extension;
 
 use pyo3::prelude::*;
 use pyo3::types::{PyByteArray, PyBytes, PyDict};
@@ -29,7 +29,7 @@ fn pack<'py>(
     value: &Bound<'py, PyAny>,
     dehydration_hooks: Option<&Bound<'py, PyAny>>,
 ) -> PyResult<Bound<'py, PyBytes>> {
-    super::v1::pack::pack::<extension::PackStreamV2Ext>(value, dehydration_hooks)
+    super::v1::_pack::pack::<_extension::PackStreamV2Ext>(value, dehydration_hooks)
 }
 
 #[pyfunction]
@@ -39,7 +39,7 @@ fn unpack(
     idx: usize,
     hydration_hooks: Option<Bound<PyDict>>,
 ) -> PyResult<(Py<PyAny>, usize)> {
-    super::v1::unpack::unpack::<extension::PackStreamV2Ext>(bytes, idx, hydration_hooks)
+    super::v1::_unpack::unpack::<_extension::PackStreamV2Ext>(bytes, idx, hydration_hooks)
 }
 
 pub(crate) fn init_module(m: &Bound<PyModule>, name: &str) -> PyResult<()> {

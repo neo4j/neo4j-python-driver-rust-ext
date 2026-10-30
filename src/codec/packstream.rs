@@ -13,7 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-mod uuid;
+mod _uuid;
 mod v1;
 mod v2;
 
