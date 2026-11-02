@@ -86,8 +86,17 @@ git commit --no-verify ...
 ### Running Tests
 ```bash
 # in the project root
-pip install . -r tests/requirements.txt
 python -m pytest tests
+```
+or using `tox` to test against multiple Python versions (which have to be
+installed on the system already) as well as integrating against the local
+driver sub-module and the matching released driver:
+```bash
+python -m tox test
+# Append e.g. `-f py315t-test` to test against Python 3.15 no-GIL only
+# or `-f test-releasedriver`/`-f test-devdriver` to test against the driver from
+# PyPI or the local copy respectively.
+# Factors can also be combined. Consult tox' documentation for more information.
 ```
 
 ### Running Benchmarks
@@ -95,9 +104,9 @@ Go into `tests/benchmarks/test_benchmarks.py` and adjust the connection details 
 This implies you're having a running database.
 Then run the benchmarks with:
 ```bash
-python -m tox -e py312-test -- --benchmark-only --benchmark-autosave
+python -m tox -e py312-bench-devdriver-allextras -- --benchmark-autosave
 # or to compare the results with the previous run
-python -m tox -e py312-test -- --benchmark-only --benchmark-autosave --benchmark-compare
+python -m tox -e py312-bench-devdriver-allextras -- --benchmark-autosave --benchmark-compare
 ```
 
 ### Changelog Entry
