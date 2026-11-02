@@ -16,9 +16,9 @@
 use pyo3::exceptions::PyValueError;
 use pyo3::prelude::*;
 
-use super::super::uuid::get_uuid_cls;
-use super::pack::PackStreamEncoder;
-use super::unpack::PackStreamDecoder;
+use super::super::_uuid::get_uuid_cls;
+use super::_pack::PackStreamEncoder;
+use super::_unpack::PackStreamDecoder;
 
 pub(crate) trait PackStreamV1Ext: Sized {
     fn pack_ext(

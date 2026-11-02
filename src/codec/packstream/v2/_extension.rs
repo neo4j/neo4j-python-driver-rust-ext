@@ -17,10 +17,10 @@ use pyo3::intern;
 use pyo3::prelude::*;
 use pyo3::IntoPyObjectExt;
 
-use super::super::uuid::get_uuid_cls;
-use super::super::v1::extension::PackStreamV1Ext;
-use super::super::v1::pack::PackStreamEncoder;
-use super::super::v1::unpack::PackStreamDecoder;
+use super::super::_uuid::get_uuid_cls;
+use super::super::v1::_extension::PackStreamV1Ext;
+use super::super::v1::_pack::PackStreamEncoder;
+use super::super::v1::_unpack::PackStreamDecoder;
 use super::UUID;
 
 pub(crate) struct PackStreamV2Ext {}
