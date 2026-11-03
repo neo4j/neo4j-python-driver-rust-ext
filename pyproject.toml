@@ -179,6 +179,12 @@ remove_redundant_aliases = true
 use_parentheses = true
 known_first_party = ["neo4j"]
 
+[tool.pytest.ini_options]
+mock_use_standalone_module = true
+asyncio_mode = "strict"
+asyncio_default_fixture_loop_scope = "function"
+timeout = 120
+
 [tool.ruff]
 line-length = 79
 extend-exclude = [
